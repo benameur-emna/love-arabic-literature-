@@ -1,0 +1,17 @@
+[
+  {"century": 1, "BIO": 0, "DEV": 0, "PHI": 0, "POE": 48, "RHE": 0, "THE": 0},
+  {"century": 2, "BIO": 0, "DEV": 15, "PHI": 0, "POE": 20, "RHE": 5, "THE": 0},
+  {"century": 3, "BIO": 18, "DEV": 180, "PHI": 15, "POE": 15, "RHE": 60, "THE": 8},
+  {"century": 4, "BIO": 48, "DEV": 260, "PHI": 25, "POE": 12, "RHE": 80, "THE": 12},
+  {"century": 5, "BIO": 40, "DEV": 88, "PHI": 11, "POE": 19, "RHE": 56, "THE": 31},
+  {"century": 6, "BIO": 63, "DEV": 18, "PHI": 24, "POE": 23, "RHE": 45, "THE": 14},
+  {"century": 7, "BIO": 84, "DEV": 10, "PHI": 5, "POE": 10, "RHE": 54, "THE": 22},
+  {"century": 8, "BIO": 60, "DEV": 6, "PHI": 2, "POE": 10, "RHE": 45, "THE": 20},
+  {"century": 9, "BIO": 54, "DEV": 13, "PHI": 1, "POE": 6, "RHE": 18, "THE": 3},
+  {"century": 10, "BIO": 27, "DEV": 6, "PHI": 2, "POE": 1, "RHE": 20, "THE": 3},
+  {"century": 11, "BIO": 15, "DEV": 3, "PHI": 1, "POE": 3, "RHE": 10, "THE": 2},
+  {"century": 12, "BIO": 11, "DEV": 4, "PHI": 4, "POE": 5, "RHE": 7, "THE": 5},
+  {"century": 13, "BIO": 10, "DEV": 12, "PHI": 2, "POE": 2, "RHE": 13, "THE": 8},
+  {"century": 14, "BIO": 43, "DEV": 2, "PHI": 83, "POE": 132, "RHE": 115, "THE": 1},
+  {"century": 15, "BIO": 25, "DEV": 2, "PHI": 189, "POE": 57, "RHE": 32, "THE": 6}
+]

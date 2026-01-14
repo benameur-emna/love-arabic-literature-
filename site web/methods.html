@@ -60,9 +60,9 @@
     <section id="viz" class="section">
       <div class="wrap narrow">
         <div class="paper card shadow panel">
-          <h2 class="sec-title">Word Frequency Over Time</h2>
-          <div id="chart" style="width: 100%; height: 400px; background: #fff; margin-top: 1rem;"></div>
-          <p class="note" style="margin-top: 1rem; text-align: center;">Interactive visualization of key emotion terms in the corpus (Sample Data)</p>
+          <h2 class="sec-title">Corpus size by century x genre</h2>
+          <div id="chart" style="width: 100%; height: 500px; background: #fff; margin-top: 1rem;"></div>
+          <p class="note" style="margin-top: 1rem; text-align: center;">Distribution of texts in the research corpus across time and literary genres (AH Century)</p>
         </div>
       </div>
     </section>
@@ -110,68 +110,108 @@
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      const data = [
-        { century: 7, hubb: 20, ishq: 5, hawa: 30 },
-        { century: 8, hubb: 25, ishq: 8, hawa: 28 },
-        { century: 9, hubb: 40, ishq: 15, hawa: 25 },
-        { century: 10, hubb: 35, ishq: 25, hawa: 22 },
-        { century: 11, hubb: 45, ishq: 35, hawa: 20 },
-        { century: 12, hubb: 50, ishq: 50, hawa: 15 }
-      ];
+      d3.json('data/corpus_size.json').then(data => {
+        const genres = ["BIO", "DEV", "PHI", "POE", "RHE", "THE"];
+        const color = d3.scaleOrdinal()
+          .domain(genres)
+          .range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"]);
 
-      const margin = {top: 40, right: 80, bottom: 40, left: 50};
-      const width = document.getElementById('chart').clientWidth - margin.left - margin.right;
-      const height = 400 - margin.top - margin.bottom;
+        const margin = {top: 40, right: 120, bottom: 60, left: 60};
+        const container = document.getElementById('chart');
+        const width = container.clientWidth - margin.left - margin.right;
+        const height = container.clientHeight - margin.top - margin.bottom;
 
-      const svg = d3.select("#chart")
-        .append("svg")
-          .attr("width", width + margin.left + margin.right)
-          .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-          .attr("transform", `translate(${margin.left},${margin.top})`);
+        const svg = d3.select("#chart")
+          .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
 
-      const x = d3.scaleLinear()
-        .domain(d3.extent(data, d => d.century))
-        .range([ 0, width ]);
-      
-      svg.append("g")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x).ticks(6).format(d => d + "th c."));
+        const x = d3.scaleLinear()
+          .domain(d3.extent(data, d => d.century))
+          .range([ 0, width ]);
+        
+        svg.append("g")
+          .attr("transform", `translate(0,${height})`)
+          .call(d3.axisBottom(x).ticks(15).format(d => d));
 
-      const y = d3.scaleLinear()
-        .domain([0, 60])
-        .range([ height, 0 ]);
-      
-      svg.append("g")
-        .call(d3.axisLeft(y));
+        svg.append("text")
+          .attr("text-anchor", "middle")
+          .attr("x", width/2)
+          .attr("y", height + 40)
+          .text("Century (AH)")
+          .style("font-size", "12px");
 
-      const lineHubb = d3.line()
-        .x(d => x(d.century))
-        .y(d => y(d.hubb))
-        .curve(d3.curveMonotoneX);
+        const y = d3.scaleLinear()
+          .domain([0, 280])
+          .range([ height, 0 ]);
+        
+        svg.append("g")
+          .call(d3.axisLeft(y));
 
-      const lineIshq = d3.line()
-        .x(d => x(d.century))
-        .y(d => y(d.ishq))
-        .curve(d3.curveMonotoneX);
+        svg.append("text")
+          .attr("text-anchor", "middle")
+          .attr("transform", "rotate(-90)")
+          .attr("y", -45)
+          .attr("x", -height/2)
+          .text("Number of texts")
+          .style("font-size", "12px");
 
-      svg.append("path")
-        .datum(data)
-        .attr("fill", "none")
-        .attr("stroke", "#7A2C2A")
-        .attr("stroke-width", 3)
-        .attr("d", lineHubb);
+        // Add gridlines
+        svg.append("g")                 
+          .attr("class", "grid")
+          .attr("opacity", 0.1)
+          .call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
+        
+        svg.append("g")                 
+          .attr("class", "grid")
+          .attr("opacity", 0.1)
+          .attr("transform", `translate(0,${height})`)
+          .call(d3.axisBottom(x).tickSize(-height).tickFormat(""));
 
-      svg.append("path")
-        .datum(data)
-        .attr("fill", "none")
-        .attr("stroke", "#B86A6A")
-        .attr("stroke-width", 3)
-        .attr("d", lineIshq);
+        genres.forEach(genre => {
+          const line = d3.line()
+            .x(d => x(d.century))
+            .y(d => y(d[genre]));
 
-      // Legend
-      svg.append("text").attr("x", width).attr("y", y(data[5].hubb)).text("Hubb").style("fill", "#7A2C2A").attr("alignment-baseline","middle").style("font-size", "14px").style("font-weight", "bold");
-      svg.append("text").attr("x", width).attr("y", y(data[5].ishq)).text("Ishq").style("fill", "#B86A6A").attr("alignment-baseline","middle").style("font-size", "14px").style("font-weight", "bold");
+          svg.append("path")
+            .datum(data)
+            .attr("fill", "none")
+            .attr("stroke", color(genre))
+            .attr("stroke-width", 1.5)
+            .attr("d", line);
+
+          svg.selectAll(`dot-${genre}`)
+            .data(data)
+            .enter()
+            .append("circle")
+              .attr("cx", d => x(d.century))
+              .attr("cy", d => y(d[genre]))
+              .attr("r", 3.5)
+              .attr("fill", color(genre));
+        });
+
+        // Legend
+        const legend = svg.append("g")
+          .attr("transform", `translate(${width + 10}, 0)`);
+
+        genres.forEach((genre, i) => {
+          const lg = legend.append("g")
+            .attr("transform", `translate(0, ${i * 20})`);
+          
+          lg.append("circle")
+            .attr("r", 4)
+            .attr("fill", color(genre));
+          
+          lg.append("text")
+            .attr("x", 10)
+            .attr("y", 4)
+            .text(genre)
+            .style("font-size", "11px")
+            .attr("alignment-baseline", "middle");
+        });
+      });
     });
   </script>
 </body>
