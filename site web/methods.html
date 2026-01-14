@@ -57,6 +57,16 @@
       </div>
     </section>
 
+    <section id="viz" class="section">
+      <div class="wrap narrow">
+        <div class="paper card shadow panel">
+          <h2 class="sec-title">Word Frequency Over Time</h2>
+          <div id="chart" style="width: 100%; height: 400px; background: #fff; margin-top: 1rem;"></div>
+          <p class="note" style="margin-top: 1rem; text-align: center;">Interactive visualization of key emotion terms in the corpus (Sample Data)</p>
+        </div>
+      </div>
+    </section>
+
     <section id="methods" class="section project">
       <div class="wrap narrow">
         <div class="paper card shadow panel">
@@ -97,5 +107,72 @@
   </footer>
 
   <script src="app.js" defer></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const data = [
+        { century: 7, hubb: 20, ishq: 5, hawa: 30 },
+        { century: 8, hubb: 25, ishq: 8, hawa: 28 },
+        { century: 9, hubb: 40, ishq: 15, hawa: 25 },
+        { century: 10, hubb: 35, ishq: 25, hawa: 22 },
+        { century: 11, hubb: 45, ishq: 35, hawa: 20 },
+        { century: 12, hubb: 50, ishq: 50, hawa: 15 }
+      ];
+
+      const margin = {top: 40, right: 80, bottom: 40, left: 50};
+      const width = document.getElementById('chart').clientWidth - margin.left - margin.right;
+      const height = 400 - margin.top - margin.bottom;
+
+      const svg = d3.select("#chart")
+        .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+          .attr("transform", `translate(${margin.left},${margin.top})`);
+
+      const x = d3.scaleLinear()
+        .domain(d3.extent(data, d => d.century))
+        .range([ 0, width ]);
+      
+      svg.append("g")
+        .attr("transform", `translate(0,${height})`)
+        .call(d3.axisBottom(x).ticks(6).format(d => d + "th c."));
+
+      const y = d3.scaleLinear()
+        .domain([0, 60])
+        .range([ height, 0 ]);
+      
+      svg.append("g")
+        .call(d3.axisLeft(y));
+
+      const lineHubb = d3.line()
+        .x(d => x(d.century))
+        .y(d => y(d.hubb))
+        .curve(d3.curveMonotoneX);
+
+      const lineIshq = d3.line()
+        .x(d => x(d.century))
+        .y(d => y(d.ishq))
+        .curve(d3.curveMonotoneX);
+
+      svg.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "#7A2C2A")
+        .attr("stroke-width", 3)
+        .attr("d", lineHubb);
+
+      svg.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "#B86A6A")
+        .attr("stroke-width", 3)
+        .attr("d", lineIshq);
+
+      // Legend
+      svg.append("text").attr("x", width).attr("y", y(data[5].hubb)).text("Hubb").style("fill", "#7A2C2A").attr("alignment-baseline","middle").style("font-size", "14px").style("font-weight", "bold");
+      svg.append("text").attr("x", width).attr("y", y(data[5].ishq)).text("Ishq").style("fill", "#B86A6A").attr("alignment-baseline","middle").style("font-size", "14px").style("font-weight", "bold");
+    });
+  </script>
 </body>
 </html>
