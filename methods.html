@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Data — The evolution of love in Arabic-Islamic literature</title>
-  <meta name="description" content="Corpus overview and genre taxonomy for a research project on love in Arabic-Islamic literature." />
+  <title>Methods — The evolution of love in Arabic-Islamic literature</title>
+  <meta name="description" content="How we turn Arabic love language into measurable signals (Bag-of-Concepts) in a transparent and auditable way." />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,11 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,600;6..72,700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css" />
-
-  <!-- D3 FIRST (important) -->
-  <script src="https://d3js.org/d3.v7.min.js" defer></script>
-  <!-- Your data page logic -->
-  <script src="data.js" defer></script>
+  <script src="methods.js" defer></script>
 </head>
 
 <body class="theme-garnet">
@@ -39,7 +35,8 @@
       <nav class="nav" aria-label="Main">
         <a href="index.html">Home</a>
         <a href="index.html#project">About</a>
-        <a href="methods.html" aria-current="page">Data</a>
+        <a href="data.html">Data</a>
+        <a href="methods.html">Methods</a>
         <a href="results.html">Results</a>
         <a href="index.html#team">Team</a>
         <a href="index.html#contact">Contact</a>
@@ -49,11 +46,12 @@
 
   <main id="main">
 
+    <!-- HERO -->
     <section class="hero" aria-labelledby="h-en">
       <div class="wrap hero__in">
-        <h1 id="h-en" class="hero-line en">Data</h1>
-        <p class="hero-line ar" dir="rtl" lang="ar">البيانات</p>
-        <p class="hero-meta">Corpus overview & genre taxonomy</p>
+        <h1 id="h-en" class="hero-line en">Methods</h1>
+        <p class="hero-line ar" dir="rtl" lang="ar">المنهجية</p>
+        <p class="hero-meta">How we turn love discourse into auditable signals (without killing the poetry)</p>
       </div>
 
       <div class="sep" aria-hidden="true">
@@ -69,120 +67,280 @@
       </div>
     </section>
 
-    <!-- Intro -->
+    <!-- ONE-SENTENCE IDEA -->
     <section class="section">
       <div class="wrap narrow">
         <div class="paper card shadow panel">
-          <h2 class="sec-title">Corpus overview</h2>
-          <p>
-            The corpus is derived from the OpenITI / Shamela library and comprises <strong>2,069 Arabic texts</strong>
-            spanning more than a millennium of writing (centuries <strong>2–15 AH</strong> in the current release).
-            Texts are grouped into six major genres (<strong>BIO, DEV, PHI, POE, RHE, THE</strong>) in order to compare
-            how literary conventions shape the expression of love across time and across discourse traditions.
+          <h2 class="sec-title">Overview</h2>
+          <p class="leadish">
+            We don’t “detect love” with a single keyword. We map love discourse as a set of <em>registers</em>
+            (desire, beauty, metaphor, spiritual love…), then estimate how densely each register appears in a text and how coherently it clusters around explicit love anchors.
           </p>
-
-          <h3 class="sec-title" style="margin-top:1.25rem;">What a “text” means here</h3>
-          <p>
-            Each entry corresponds to a distinct work as represented in the corpus (not chapters or excerpts).
-            Genre labels reflect the dominant discursive tradition of the work (e.g., poetic, devotional/mystical, adab/rhetorical),
-            acknowledging that boundary cases and hybrid works exist.
-          </p>
-
-          
-
-        </div>
-      </div>
-    </section>
-
-    <!-- Figure 1 -->
-    <section class="section">
-      <div class="wrap narrow">
-        <div class="paper card shadow panel">
-          <h2 class="sec-title">Figure 1 — Corpus size by century and genre (log scale)</h2>
-          <div id="chart-lines" class="vizbox" aria-label="Line chart: corpus size by century and genre"></div>
-          <p class="note" style="margin-top: 0.9rem; text-align:center;">
-            This figure shows the number of texts per century (AH), broken down by genre.
-            A log scale is used to make disparities in genre coverage visible while preserving long-term trends.
-            The plot highlights both diachronic variation in availability and genre-specific peaks.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Figure 2 -->
-    <section class="section">
-      <div class="wrap narrow">
-        <div class="paper card shadow panel">
-          <h2 class="sec-title">Figure 2 — Genre proportions in the corpus</h2>
-          <div class="vizgrid">
-            <div id="chart-pie" class="vizbox" aria-label="Pie chart: genre proportions"></div>
-            <div class="legendbox">
-              <div class="legendtitle">Genres</div>
-              <ul id="pie-legend" class="legendlist"></ul>
-            </div>
+          <div class="callout">
+          <p>Each text receives:</p>
+          <p>  - nine register scores (BoC dimensions), each on a continuous scale 0–2, and</p>
+          <p>  - nine register scores (BoC dimensions), each on a continuous scale 0–2, and a Love Index, a single composite score designed to approximate the overall “love intensity” of the text in a way that remains comparable across genres and centuries.</p>
           </div>
-
-          <p class="note" style="margin-top: 0.9rem; text-align:center;">
-            Overall distribution of texts across the six genres. This provides a quick sense of which discourse traditions
-            are more represented in the dataset and should be kept in mind when interpreting downstream results.
-          </p>
-
         </div>
       </div>
     </section>
 
-    <!-- Table -->
+    <!-- ACCORDIONS -->
     <section class="section">
       <div class="wrap narrow">
         <div class="paper card shadow panel">
-          <h2 class="sec-title">Table — Genre labels and counts </h2>
+          <h2 class="sec-title">How it works </h2>
 
-          <div class="tablewrap" role="region" aria-label="Genre taxonomy table" tabindex="0">
-            <table class="gentable">
-              <thead>
-                <tr>
-                  <th>Code</th>
-                  <th>Label (English)</th>
-                  <th lang="ar" dir="rtl">Label (Arabic)</th>
-                  <th>Texts</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td><strong>BIO</strong></td><td>Biographical</td><td lang="ar" dir="rtl">تراجم</td><td id="c_BIO">—</td></tr>
-                <tr><td><strong>DEV</strong></td><td>Devotional / Mystical</td><td lang="ar" dir="rtl">تعبدي / صوفي</td><td id="c_DEV">—</td></tr>
-                <tr><td><strong>PHI</strong></td><td>Philosophical</td><td lang="ar" dir="rtl">فلسفي</td><td id="c_PHI">—</td></tr>
-                <tr><td><strong>POE</strong></td><td>Poetic</td><td lang="ar" dir="rtl">شعري</td><td id="c_POE">—</td></tr>
-                <tr><td><strong>RHE</strong></td><td>Rhetorical / Adab</td><td lang="ar" dir="rtl">أدبي</td><td id="c_RHE">—</td></tr>
-                <tr><td><strong>THE</strong></td><td>Theological / Scholastic (kalām)</td><td lang="ar" dir="rtl">كلامي</td><td id="c_THE">—</td></tr>
-              </tbody>
-            </table>
-          </div>
+          <div class="acc">
 
-          <h3 class="sec-title" style="margin-top: 1.8rem;">What each genre captures</h3>
+            <details open>
+              <summary>
+                <span class="acc-kicker">1</span>
+                <span class="acc-title">Bag-of-Concepts: love as a map, not a word count</span>
+              </summary>
+              <div class="acc-body">
+                <p>
+                  A classic Bag-of-Words approach counts surface words. That’s fragile in Arabic:
+                  morphology is rich, spelling varies, and love is often coded (metaphor, imagery, etiquette).
+                </p>
+                <p>
+                  So we use a <strong>Bag-of-Concepts (BoC)</strong> model:
+                </p>
+                <ul class="bullets">
+                  <li><strong>BoW:</strong> “Does the word appear?”</li>
+                  <li><strong>BoC:</strong> “Does the text sound like this concept, across many lexical cues and roots?”</li>
+                </ul>
+              </div>
+            </details>
 
-          <div class="gendefs">
-            <p><strong>BIO — Biographical (tarājim).</strong> Biographical works include lives of scholars, poets, rulers, saints, or notable figures. Love appears through anecdotes, reputational narratives, moral exempla, and accounts of relationships (sometimes implicitly), offering a lens on how love is framed through social status, virtue, and memory.</p>
-            <p><strong>DEV — Devotional / Mystical (taʿabbudī / ṣūfī).</strong> Devotional and mystical texts foreground love as a spiritual practice: longing, devotion, purification, divine union, and moral self-work. This genre is key to capturing mystical love and the language of desire redirected toward the divine, often through rich metaphorical registers.</p>
-            <p><strong>PHI — Philosophical (falsafī).</strong> Philosophical texts include discussions of ethics, the soul, virtues, and the nature of desire and attachment. Love can appear as a conceptual object: definitions, causes, typologies, and debates about the relationship between love, reason, and the good life—often in an analytical tone rather than a lyrical one.</p>
-            <p><strong>POE — Poetic (shiʿrī).</strong> Poetry (especially ghazal and adjacent traditions) is the canonical space for passion, longing, separation, jealousy, and idealization, with dense figurative language. This genre tends to maximize emotional intensity and stylistic innovation, making it central for tracking lexical and imagistic changes in love discourse over time.</p>
-            <p><strong>RHE — Rhetorical / Adab (adabī).</strong> Adab and rhetorical literature includes anthologies, belles-lettres, anecdotes, moralized storytelling, and refined prose. Love appears as social performance and cultural literacy: witty scenes, normative advice, erotic insinuation, urbanity, and the management of desire through language and etiquette.</p>
-            <p><strong>THE — Theological / Scholastic (kalām).</strong> Kalām and theological texts discuss doctrine, orthodoxy, and the rational defense of beliefs. Love may surface in relation to God, belief, obedience, and ethical frameworks—less as romance, more as a theology of attachment.</p>
-          </div>
+            <details>
+              <summary>
+                <span class="acc-kicker">2</span>
+                <span class="acc-title">The love palette: our BoC registers</span>
+              </summary>
+              <div class="acc-body">
+                <p>
+                  Each register is a curated set of Arabic roots + lexical cues associated with one “way of speaking love”.
+                  Scores are continuous (<strong>0–2</strong>): not yes/no, but <em>how much</em>.
+                </p>
 
-        </div>
+                <div class="reggrid">
+                  <div class="reg">
+                    <div class="reg-head"><span class="reg-name">BoC_anchor</span><span class="reg-tag">high precision</span></div>
+                    <p><strong>Explicit love.</strong> Direct markers (حب، محبة، عشق، غرام…). Catches passages that name love.</p>
+                  </div>
+
+                  <div class="reg">
+                    <div class="reg-head"><span class="reg-name">BoC_spirit</span></div>
+                    <p><strong>Devotional / mystical love.</strong> Longing as devotion: dhikr, purification, divine proximity.</p>
+                  </div>
+
+                  <div class="reg">
+                    <div class="reg-head"><span class="reg-name">BoC_human</span></div>
+                    <p><strong>Interpersonal attachment.</strong> Meeting, waiting, fidelity, jealousy, separation… love as bond.</p>
+                  </div>
+
+                  <div class="reg">
+                    <div class="reg-head"><span class="reg-name">BoC_desire</span></div>
+                    <p><strong>Sensual tension.</strong> Attraction, seduction, closeness — explicit or coded.</p>
+                  </div>
+
+                  <div class="reg">
+                    <div class="reg-head"><span class="reg-name">BoC_beauty</span></div>
+                    <p><strong>Grace / charm.</strong> Beauty, light, perfume, softness, bodies, faces, even scenery.</p>
+                  </div>
+
+                  <div class="reg">
+                    <div class="reg-head"><span class="reg-name">BoC_metaphor</span></div>
+                    <p><strong>Classical love imagery.</strong> Fire, burning, moon, night, wound, arrow, madness…</p>
+                  </div>
+
+                  <div class="reg">
+                    <div class="reg-head"><span class="reg-name">BoC_ethic</span></div>
+                    <p><strong>Love as virtue.</strong> Patience, loyalty, sincerity, mercy, moralized love language.</p>
+                  </div>
+
+                  <div class="reg">
+                    <div class="reg-head"><span class="reg-name">BoC_family</span></div>
+                    <p><strong>Beyond romance.</strong> Kinship, friendship, care, tenderness outside desire.</p>
+                  </div>
+
+                  <div class="reg">
+                    <div class="reg-head"><span class="reg-name">BoC_modern</span></div>
+                    <p><strong>Contemporary talk.</strong> Couple discourse, breakups, therapy, toxicity, social media…</p>
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <details>
+              <summary>
+                <span class="acc-kicker">3</span>
+                <span class="acc-title">What a score (0–2) actually means</span>
+              </summary>
+              <div class="acc-body">
+                <p>A BoC score is a <strong>semantic density estimate</strong>:</p>
+                <ul class="bullets">
+                  <li><strong>0</strong> ≈ absent / negligible</li>
+                  <li><strong>~1</strong> ≈ meaningfully present</li>
+                  <li><strong>~2</strong> ≈ strongly shapes the text’s language</li>
+                </ul>
+              </div>
+            </details>
+
+            <details open>
+              <summary>
+                <span class="acc-kicker">4</span>
+                <span class="acc-title">The pipeline </span>
+              </summary>
+              <div class="acc-body">
+                <div class="pipe">
+                  <div class="pipe-step">Text</div>
+                  <div class="pipe-arrow" aria-hidden="true">→</div>
+                  <div class="pipe-step">Signals</div>
+                  <div class="pipe-arrow" aria-hidden="true">→</div>
+                  <div class="pipe-step">BoC scores (0–2)</div>
+                  <div class="pipe-arrow" aria-hidden="true">→</div>
+                  <div class="pipe-step">Love Index</div>
+                </div>
+
+                <ul class="bullets">
+                  <li><strong>Normalize</strong> (minimal Arabic cleanup, keep style)</li>
+                  <li><strong>Detect register cues</strong> (roots + lexical patterns)</li>
+                  <li><strong>Weight evidence</strong> (rarity, idioms)</li>
+                  <li><strong>Check coherence</strong> (proximity to explicit anchors)</li>
+                  <li><strong>Normalize by length</strong> (fairness across books)</li>
+                  <li><strong>Compute Love Index</strong> (transparent composite score)</li>
+                </ul>
+              </div>
+            </details>
+
+            <details>
+              <summary>
+                <span class="acc-kicker">5</span>
+                <span class="acc-title">Why it works (the “ingredients”)</span>
+              </summary>
+              <div class="acc-body">
+                <div class="two-col">
+                  <div class="mini">
+                    <h3 class="mini-title">Rarity matters (IDF boost)</h3>
+                    <p>Rare love cues are more diagnostic; frequent generic words get down-weighted.</p>
+                  </div>
+                  <div class="mini">
+                    <h3 class="mini-title">Idioms count</h3>
+                    <p>Fixed expressions carry meaning beyond isolated tokens; we apply a small boost.</p>
+                  </div>
+                  <div class="mini">
+                    <h3 class="mini-title">Anchor proximity (coherence)</h3>
+                    <p>Beauty/fire/night can be non-love. If cues cluster near explicit anchors, the score rises.</p>
+                  </div>
+                  <div class="mini">
+                    <h3 class="mini-title">Length normalization</h3>
+                    <p>Long books contain more of everything; we score density so texts are comparable.</p>
+                  </div>
+                  <div class="mini">
+                    <h3 class="mini-title">Technical-language penalty</h3>
+                    <p>Conceptual definitions ≠ affective saturation; we prevent “definition-heavy” texts from dominating.</p>
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <details open>
+              <summary>
+                <span class="acc-kicker">6</span>
+                <span class="acc-title">Love Index </span>
+              </summary>
+              <div class="acc-body">
+  <p>
+    The Love Index is <strong>not</strong> a direct sum of BoC scores. BoC registers are the starting point, but
+    the final score also accounts for how Arabic love discourse works: rarity, idioms, contextual coherence,
+    and fair comparison across texts.
+  </p>
+
+  <div class="callout">
+    <p><strong>What it measures.</strong> The density and coherence of <em>love discourse</em> in a text — not the author’s feelings,
+      and not a simple keyword frequency.</p>
+  </div>
+
+  <h3 class="mini-title" style="margin-top:1rem;">What the index includes (in practice)</h3>
+  <ul class="bullets">
+    <li><strong>Register evidence (BoC):</strong> concept-level signals across roots and lexical cues (not a Bag-of-Words count).</li>
+    <li><strong>Rarity (IDF boost):</strong> rare cues weigh more; very frequent terms carry less signal.</li>
+    <li><strong>Idioms:</strong> strong collocations get a small boost (meaning beyond isolated tokens).</li>
+    <li><strong>Anchor proximity:</strong> register cues contribute more when they cluster near explicit love anchors.</li>
+    <li><strong>Length normalization:</strong> comparability across short and long texts.</li>
+    <li><strong>Technical-language penalty:</strong> prevents “definition-heavy” texts from scoring as love-saturated.</li>
+    <li><strong>Density:</strong> final values are expressed as a comparable score (e.g., per 1,000 tokens).</li>
+  </ul>
+
+  <div class="method-footer" style="margin-top:1rem;">
+    <div class="mf-chip">Registers</div>
+    <div class="mf-chip">IDF</div>
+    <div class="mf-chip">Idioms</div>
+    <div class="mf-chip">Anchor proximity</div>
+    <div class="mf-chip">Length norm</div>
+    <div class="mf-chip">Tech penalty</div>
+    <div class="mf-chip">→ Density / 1,000 tokens</div>
+  </div>
+
+  <h3 class="mini-title" style="margin-top:1.2rem;">Transparent aggregation </h3>
+  <p class="note">
+    After these adjustments, we summarize registers using a weighted mean, not as the whole method,
+    but as a readable final lens. We keep weights manual : readable, debatable, testable, to get the closest possible to the common perception of 'Love' as a universal concept.
+  </p>
+
+  <!-- OPTIONAL: keep your sliders UI if you want -->
+  <div class="weights">
+    <div class="weights-head">
+      <h3 class="mini-title">Baseline weights (editable)</h3>
+      <button id="resetWeights" class="btn-flat" type="button">Reset</button>
+    </div>
+
+    <div class="weights-grid" id="weightsGrid" aria-label="Weights sliders"></div>
+
+    <div class="weights-foot">
+      <div class="eq">
+        <div class="eq-label">Aggregation formula </div>
+        <code id="eqStr" class="eq-code"></code>
       </div>
-    </section>
+
+    </div>
+  </div>
+</div>
+
+              </div>
+            </details>
+
+            <details>
+              <summary>
+                <span class="acc-kicker">7</span>
+                <span class="acc-title">What we store per text </span>
+              </summary>
+              <div class="acc-body">
+                <ul class="bullets">
+                  <li>the nine BoC scores (0–2)</li>
+                  <li>the Love Index</li>
+                  <li>diagnostic counters (anchors, proximity stats)</li>
+                  <li>metadata (century, genre)</li>
+                </ul>
+                <p class="note">
+                  This makes it possible to go from overview graphs → specific texts → evidence.
+                </p>
+              </div>
+            </details>
+
+        
 
   </main>
 
   <footer class="site-ftr">
     <div class="wrap ftr__in">
       <p>© <span id="year"></span> · Université PSL / Institut Jean Nicod</p>
-      <p><a href="index.html">Home</a> · <a href="results.html">Results</a></p>
+      <p><a href="index.html">Home</a> · <a href="methods.html">Data</a> · <a href="results.html">Results</a></p>
     </div>
   </footer>
 
-  <!-- keep your year script if you already have it in app.js, otherwise: -->
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>

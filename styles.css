@@ -700,3 +700,331 @@ body.theme-garnet{
 
 .legend-row:hover text { text-decoration: underline; }
 .legend-row:hover circle { filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15)); }
+/* ===== Methods page extras (accordion + weights) ===== */
+
+.leadish{
+  font-size: 1.05rem;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.callout{
+  margin-top: 1.1rem;
+  border: 1px solid rgba(43,36,32,0.15);
+  background: rgba(246,241,231,0.55);
+  padding: 0.9rem 1rem;
+  box-shadow: 0 10px 26px rgba(17,33,42,0.08);
+}
+
+.acc details{
+  border-top: 1px solid rgba(43,36,32,0.14);
+  padding: 0.65rem 0;
+}
+
+.acc details:last-child{
+  border-bottom: 1px solid rgba(43,36,32,0.14);
+}
+
+.acc summary{
+  list-style: none;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 0.75rem;
+  align-items: baseline;
+  user-select: none;
+}
+
+.acc summary::-webkit-details-marker{ display:none; }
+
+.acc-kicker{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(43,36,32,0.22);
+  background: rgba(246,241,231,0.45);
+  font-weight: 700;
+}
+
+.acc-title{
+  font-weight: 700;
+}
+
+.acc-body{
+  margin-left: calc(28px + 0.75rem);
+  padding: 0.65rem 0 0.25rem;
+}
+
+.reggrid{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+@media (max-width: 860px){
+  .reggrid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 520px){
+  .reggrid{ grid-template-columns: 1fr; }
+}
+
+.reg{
+  border: 1px solid rgba(43,36,32,0.14);
+  background: rgba(246,241,231,0.35);
+  padding: 0.75rem 0.85rem;
+  box-shadow: 0 12px 30px rgba(17,33,42,0.08);
+}
+
+.reg-head{
+  display:flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.reg-name{
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.reg-tag{
+  font-size: 0.78rem;
+  opacity: 0.85;
+  border: 1px solid rgba(43,36,32,0.22);
+  padding: 0.1rem 0.45rem;
+}
+
+.pipe{
+  display:flex;
+  align-items:center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  margin: 0.9rem 0 0.75rem;
+}
+
+.pipe-step{
+  border: 1px solid rgba(43,36,32,0.18);
+  background: rgba(246,241,231,0.35);
+  padding: 0.35rem 0.6rem;
+  font-weight: 700;
+}
+
+.pipe-arrow{
+  opacity: 0.75;
+  font-weight: 700;
+}
+
+.two-col{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 0.8rem;
+}
+@media (max-width: 680px){
+  .two-col{ grid-template-columns: 1fr; }
+}
+
+.mini{
+  border: 1px solid rgba(43,36,32,0.14);
+  background: rgba(246,241,231,0.28);
+  padding: 0.75rem 0.85rem;
+  box-shadow: 0 12px 28px rgba(17,33,42,0.08);
+}
+
+.mini-title{
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.weights{
+  margin-top: 0.9rem;
+  border: 1px solid rgba(43,36,32,0.14);
+  background: rgba(246,241,231,0.22);
+  padding: 0.85rem;
+}
+
+.weights-head{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.btn-flat{
+  appearance:none;
+  border: 1px solid rgba(43,36,32,0.28);
+  background: transparent;
+  padding: 0.35rem 0.6rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.weights-grid{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+  margin-top: 0.65rem;
+}
+
+.wrow{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  border-top: 1px dashed rgba(43,36,32,0.18);
+  padding-top: 0.55rem;
+}
+.wrow:first-child{ border-top: none; padding-top: 0; }
+
+.wleft .wkey{
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+.wleft .wdesc{
+  font-size: 0.9rem;
+  opacity: 0.85;
+  margin-top: 0.05rem;
+}
+
+.wright{
+  display:flex;
+  align-items:center;
+  gap: 0.6rem;
+}
+
+.wslider{
+  width: 100%;
+}
+
+.wval{
+  min-width: 3.2rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+.eq{
+  margin-top: 0.75rem;
+  border-top: 1px solid rgba(43,36,32,0.14);
+  padding-top: 0.65rem;
+}
+.eq-label{
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+}
+.eq-code{
+  display:block;
+  white-space: normal;
+  line-height: 1.5;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid rgba(43,36,32,0.14);
+  background: rgba(246,241,231,0.35);
+}
+
+.method-footer{
+  margin-top: 1.25rem;
+  display:flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.mf-chip{
+  border: 1px solid rgba(43,36,32,0.20);
+  background: rgba(246,241,231,0.28);
+  padding: 0.25rem 0.55rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+/* Hide aggregation formula box but keep sliders intact */
+.eq { display: none !important; }
+/* --- viz helpers (optional but recommended) --- */
+.viztip{
+  position: absolute;
+  background: rgba(20,18,16,0.92);
+  color: #F6F1E7;
+  padding: .5rem .6rem;
+  border-radius: .6rem;
+  font-size: 12px;
+  line-height: 1.2;
+  pointer-events: none;
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(0,0,0,.18);
+  max-width: 260px;
+  z-index: 50;
+}
+
+.legendrow.off text{ opacity: .45; }
+.legendrow.off circle{ opacity: .25; }
+/* ===== Results/Data charts visibility fix ===== */
+
+.vizbox {
+  position: relative;
+  min-height: 420px;     /* IMPORTANT: gives the SVG real vertical space */
+  width: 100%;
+}
+
+.vizbox svg {
+  display: block;
+}
+
+/* Make D3 axes readable even if theme uses very soft colors */
+.vizbox .tick text {
+  fill: rgba(27, 27, 27, 0.85) !important;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 12px;
+}
+
+.vizbox .domain,
+.vizbox .tick line {
+  stroke: rgba(27, 27, 27, 0.35) !important;
+}
+
+.vizbox .grid .tick line {
+  stroke: rgba(27, 27, 27, 0.18) !important;
+}
+
+/* Tooltip always visible above */
+.viztip {
+  z-index: 9999;
+}
+
+/* Optional: slightly darker plot background (subtle) */
+.vizbox {
+  background: rgba(20, 18, 16, 0.03);
+  border: 1px solid rgba(20, 18, 16, 0.12);
+  border-radius: 14px;
+}
+/* Ensure chart containers have height */
+.vizbox{
+  min-height: 420px;
+  position: relative;
+}
+
+/* Tooltip already used in data.js; keep consistent */
+.viztip{
+  position: absolute;
+  pointer-events: none;
+  background: rgba(30,25,22,0.92);
+  color: #F6F1E7;
+  padding: .5rem .6rem;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.25;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  transform: translateZ(0);
+  max-width: 280px;
+}
+
+/* Clickable legend */
+.legend-clickable{
+  cursor: pointer;
+  user-select: none;
+}
+.legend-clickable.is-off{
+  opacity: 0.28;
+}

@@ -3,36 +3,40 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Results — Research on Arabic Literature & Love</title>
-  <meta name="description" content="Key findings and results from the research on the evolution of love in Arabic-Islamic literature." />
+  <title>Results — The evolution of love in Arabic-Islamic literature</title>
+  <meta name="description" content="Preliminary findings on love discourse in Arabic literature (Love Index, 0–2)." />
 
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,600;6..72,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Load D3 ONCE (correct URL) -->
+  <script src="https://d3js.org/d3.v7.min.js" defer></script>
+  <script src="results.js" defer></script>
 </head>
+
 <body class="theme-garnet">
-  
-<a class="rose-skip left" href="index.html" aria-label="Back to home">
-  <svg width="16" height="16" viewBox="0 0 120 120" role="img" aria-hidden="true" focusable="false">
-    <g fill="none" stroke="#F6F1E7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M60 30 C58 50, 58 80, 60 95" />
-      <path d="M54 62 C40 58, 38 68, 52 72" />
-      <path d="M66 62 C80 58, 82 68, 68 72" />
-    </g>
-    <path d="M60 28 c18 0 30 10 30 22 s-12 22-30 22 s-30-10-30-22 s12-22 30-22z" fill="#B86A6A"/>
-  </svg>
-  <span class="visually-hidden">Back to home</span>
-</a>
+
+  <a class="rose-skip left" href="index.html" aria-label="Back to home">
+    <svg width="18" height="18" viewBox="0 0 120 120" role="img" aria-hidden="true" focusable="false">
+      <g fill="none" stroke="#F6F1E7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M60 30 C58 50, 58 80, 60 95" />
+        <path d="M54 62 C40 58, 38 68, 52 72" />
+        <path d="M66 62 C80 58, 82 68, 68 72" />
+      </g>
+      <path d="M60 28 c18 0 30 10 30 22 s-12 22-30 22 s-30-10-30-22 s12-22 30-22z" fill="#B86A6A"/>
+    </svg>
+    <span class="visually-hidden">Back to home</span>
+  </a>
 
   <header class="site-hdr" role="banner">
     <div class="wrap hdr__in">
       <nav class="nav" aria-label="Main">
         <a href="index.html">Home</a>
         <a href="index.html#project">About</a>
-        <a href="methods.html">Data & Methods</a>
-        <a href="#results">Results</a>
+        <a href="methods.html">Data</a>
+        <a href="results.html" aria-current="page">Results</a>
         <a href="index.html#team">Team</a>
         <a href="index.html#contact">Contact</a>
       </nav>
@@ -40,196 +44,185 @@
   </header>
 
   <main id="main">
-    <section class="hero" aria-labelledby="h-en">
+
+    <!-- Hero -->
+    <section class="hero" aria-labelledby="h-res">
       <div class="wrap hero__in">
-        <h1 id="h-en" class="hero-line en">Research Results</h1>
-        <p class="hero-line ar" dir="rtl" lang="ar">نتائج البحث</p>
-        <p class="hero-meta">Shifting paradigms of love in the Arabic tradition</p>
+        <h1 id="h-res" class="hero-line en">Results</h1>
+        <p class="hero-line ar" dir="rtl" lang="ar">النتائج</p>
+        <p class="hero-meta">Preliminary findings on love discourse in Arabic literature (Love Index, 0–2)</p>
+
+        <div style="margin-top:1rem;">
+          <span class="pill" style="display:inline-block; padding:.35rem .6rem; border-radius:999px; background:rgba(184,106,106,.18); border:1px solid rgba(184,106,106,.45); font-weight:700;">
+            Preliminary
+          </span>
+          <span style="margin-left:.5rem; opacity:.9;">
+            Work in progress — results may evolve as the corpus, metadata, and scoring procedure are refined.
+          </span>
+        </div>
+
+        <p style="margin-top:1rem; max-width:60ch;">
+          We track the density of love-related discourse with a Love Index (<code>BoC_final_0_2</code>, 0–2).
+          Across centuries and genres, the current data suggests an early decline followed by a possible late rebound—patterns we probe with simple statistical models.
+        </p>
       </div>
+
       <div class="sep" aria-hidden="true">
-        <svg class="fleuron" viewBox="0 0 120 24" role="img" aria-label="fleuron">
+        <svg class="fleuron" viewBox="0 0 160 24" role="img" aria-label="separator">
           <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12,12 c6,-8 18,-8 24,0 c-6,8 -18,8 -24,0 z" />
-            <path d="M84,12 c-6,-8 -18,-8 -24,0 c6,8 18,8 24,0 z" />
-            <circle cx="60" cy="12" r="3.5"/>
+            <path d="M10,12 c10,-10 30,-10 40,0 c-10,10 -30,10 -40,0 z" />
+            <path d="M150,12 c-10,-10 -30,-10 -40,0 c10,10 30,10 40,0 z" />
+            <circle cx="80" cy="12" r="3.2"/>
+            <path d="M72,12 h-18" />
+            <path d="M88,12 h18" />
           </g>
         </svg>
       </div>
     </section>
 
-    <section id="viz" class="section">
+    <!-- 1) Big picture -->
+    <section class="section">
       <div class="wrap narrow">
         <div class="paper card shadow panel">
-          <h2 class="sec-title">Conceptual Evolution of Love Terms</h2>
-          <div id="chart" style="width: 100%; height: 500px; background: #fff; margin-top: 1rem;"></div>
-          <p class="note" style="margin-top: 1rem; text-align: center;">Relative prominence of key concepts (Hubb vs. 'Ishq) across centuries (Sample Data)</p>
+          <h2 class="sec-title">The long-term curve (all genres pooled)</h2>
+          <div id="chart-global" class="vizbox" aria-label="Line chart: Mean Love Index by century"></div>
+          <p class="note" style="margin-top:.9rem; text-align:center;">
+            Mean Love Index (0–2) by century (AH), all genres combined.
+          </p>
+          <p>
+            At this stage, the corpus suggests a progressive decline starting around the 1st–2nd centuries AH,
+            with a possible rebound in the 13th–14th centuries AH. This is a pattern of discursive visibility
+            (what is expressed, preserved, and digitized), not a direct measure of private emotions.
+          </p>
         </div>
       </div>
     </section>
 
-    <section id="results" class="section project">
+    <!-- 2) By genre -->
+    <section class="section">
       <div class="wrap narrow">
         <div class="paper card shadow panel">
-          <h2 id="results-title" class="sec-title">Key Findings</h2>
-          <p>
-            Our analysis reveals a dynamic landscape where the language of love reflects broader intellectual and social shifts:
+          <h2 class="sec-title">By genre: different trajectories, different baselines</h2>
+          <div id="chart-genre" class="vizbox" aria-label="Line chart: Mean Love Index by century and genre"></div>
+          <p class="note" style="margin-top:.9rem; text-align:center;">
+            Mean Love Index (0–2) by century (AH) and genre. Click legend items to hide/show genres.
           </p>
-          <ul class="bullets">
-            <li><strong>The Rise of 'Ishq:</strong> While early texts favor <em>Hubb</em> for its ethical and spiritual breadth, <em>'Ishq</em> gains prominence in later centuries as a technical term in mystical and philosophical discourses.</li>
-            <li><strong>Genre Specificity:</strong> Love metaphors in poetry maintain high continuity, whereas prose registers (theology, rhetoric) show significant adaptation to evolving ethical frameworks.</li>
-            <li><strong>Vocabulary Diversification:</strong> A marked increase in the diversity of love-related terms during the 3rd and 4th centuries AH, coinciding with the "Golden Age" of Arabic literature.</li>
+          <p>
+            The decline-and-rebound pattern is not identical across genres. Some genres remain consistently higher or lower,
+            and late-period changes appear uneven. Shifts in the corpus-wide average may reflect both within-genre change
+            and changes in genre composition across centuries.
+          </p>
+          <p class="note">
+            Because century-level counts differ by genre, these results should be read alongside corpus coverage patterns (see Data page).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3) Stats -->
+    <section class="section">
+      <div class="wrap narrow">
+        <div class="paper card shadow panel">
+          <h2 class="sec-title">Statistical signals (selected tests)</h2>
+          <p class="note">We summarize a few key statistics to support visual patterns; this is not exhaustive.</p>
+
+          <h3 class="sec-title" style="margin-top:1.2rem;">Quadratic regression (non-linear trend)</h3>
+          <ul>
+            <li>century: <strong id="q_century">—</strong></li>
+            <li>century²: <strong id="q_century2">—</strong></li>
+            <li>R²: <strong id="q_r2">—</strong></li>
+          </ul>
+          <p class="note" id="q_interp"></p>
+
+          <h3 class="sec-title" style="margin-top:1.2rem;">Segmented regression (break at 12th century AH)</h3>
+          <ul>
+            <li>century: <strong id="s_century">—</strong></li>
+            <li>post_12: <strong id="s_post12">—</strong></li>
+            <li>century_post_12: <strong id="s_cpost12">—</strong></li>
+            <li>R²: <strong id="s_r2">—</strong></li>
+          </ul>
+          <p class="note" id="s_interp"></p>
+
+          <p class="note" style="margin-top:1rem;">
+            These are preliminary models meant to test broad tendencies. Future iterations will explore robustness to corpus updates,
+            alternative breakpoints, and richer controls.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4) Scatter -->
+    <section class="section">
+      <div class="wrap narrow">
+        <div class="paper card shadow panel">
+          <h2 class="sec-title">Explore the corpus: every text on the timeline</h2>
+          <p class="note">
+            Each point is a text. x-axis: century (AH) · y-axis: Love Index (0–2). Hover to reveal title, author, genre, century, score.
+            Click legend items to hide/show genres.
+          </p>
+          <div id="chart-scatter" class="vizbox" aria-label="Scatter plot: texts by century and Love Index"></div>
+
+          <h3 class="sec-title" style="margin-top:1.2rem;">What to look for</h3>
+          <ul>
+            <li>outliers (very high / very low)</li>
+            <li>clusters by century</li>
+            <li>whether dispersion changes over time</li>
           </ul>
         </div>
       </div>
     </section>
+
+    <!-- 5) Text spotlights -->
+    <section class="section">
+      <div class="wrap narrow">
+        <div class="paper card shadow panel">
+          <h2 class="sec-title">Text spotlights (examples from both ends)</h2>
+          <p class="note">
+            The following titles illustrate the range of Love Index scores in the current version of the dataset.
+          </p>
+
+          <div class="vizgrid" style="align-items:start;">
+            <div>
+              <h3 class="sec-title">Among the most “amorous” texts</h3>
+              <ul id="top-texts"></ul>
+            </div>
+            <div>
+              <h3 class="sec-title">Among the least “amorous” texts</h3>
+              <ul id="bottom-texts"></ul>
+            </div>
+          </div>
+
+          <p class="note" style="margin-top:1rem;">
+            High scores typically reflect sustained love-related language, while low scores often correspond to works whose dominant aims are not love-related (e.g., lexicography or other technical genres).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6) Footer note -->
+    <section class="section">
+      <div class="wrap narrow">
+        <div class="paper card shadow panel">
+          <h2 class="sec-title">What’s next</h2>
+          <p class="note">
+            Preliminary findings. These results should be interpreted as provisional: updates to corpus coverage, metadata, scoring calibration,
+            and further research questions may shift estimates while preserving (or challenging) broad trends.
+          </p>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <footer class="site-ftr">
     <div class="wrap ftr__in">
-      <p>© <span id="year"></span> · Project Name — ENS | Institut Jean Nicod</p>
-      <p><a href="index.html">Home</a> · <a href="#">Terms</a></p>
+      <p>© <span id="year"></span> · Université PSL / Institut Jean Nicod</p>
+      <p><a href="index.html">Home</a> · <a href="methods.html">Data</a></p>
     </div>
   </footer>
 
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', async () => {
-
-  // ---- CONFIG: adjust if your column names differ
-  const CSV_PATH = "data/BoC_v3_EXTENDED_scored.csv";
-  const SCORE_COL = "BoC_final_0_2";     // your love score column (change if needed)
-  const DATE_COL  = "date";             // change if needed
-  const GENRE_COL = "GenreLabel";       // change if needed
-  const TITLE_AR  = "title_ar";         // optional
-  const TITLE_LAT = "title_lat";        // optional
-  const AUTHOR    = "author_lat";       // optional
-  // --------------------------------------------
-
-  const raw = await d3.csv(CSV_PATH);
-
-  // detect columns if some are missing
-  const cols = raw.columns;
-  const scoreCol = cols.includes(SCORE_COL) ? SCORE_COL : cols.find(c => c.toLowerCase().includes("boc_final")) || SCORE_COL;
-  const dateCol  = cols.includes(DATE_COL)  ? DATE_COL  : cols.find(c => c.toLowerCase().includes("date") || c.toLowerCase().includes("year")) || DATE_COL;
-  const genreCol = cols.includes(GENRE_COL) ? GENRE_COL : cols.find(c => c.toLowerCase().includes("genre")) || GENRE_COL;
-
-  // parse
-  const rows = raw.map(d => ({
-    score: +d[scoreCol],
-    date: d[dateCol],
-    genre: d[genreCol],
-    title_ar: d[TITLE_AR],
-    title_lat: d[TITLE_LAT],
-    author: d[AUTHOR]
-  })).filter(d => Number.isFinite(d.score));
-
-  // ---- 1) Histogram
-  const chartEl = document.getElementById('results-chart');
-  chartEl.innerHTML = "";
-
-  const margin = {top: 22, right: 18, bottom: 44, left: 46};
-  const width = chartEl.clientWidth - margin.left - margin.right;
-  const height = 320 - margin.top - margin.bottom;
-
-  const svg = d3.select(chartEl)
-    .append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
-
-  const x = d3.scaleLinear()
-    .domain(d3.extent(rows, d => d.score)).nice()
-    .range([0, width]);
-
-  const bins = d3.bin()
-    .domain(x.domain())
-    .thresholds(22)
-    (rows.map(d => d.score));
-
-  const y = d3.scaleLinear()
-    .domain([0, d3.max(bins, b => b.length) || 1]).nice()
-    .range([height, 0]);
-
-  svg.append("g")
-    .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(x).ticks(6));
-
-  svg.append("g")
-    .call(d3.axisLeft(y).ticks(5));
-
-  // subtle grid
-  svg.append("g")
-    .attr("opacity", 0.10)
-    .call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
-
-  // bars
-  svg.selectAll("rect")
-    .data(bins)
-    .enter().append("rect")
-      .attr("x", d => x(d.x0) + 1)
-      .attr("y", d => y(d.length))
-      .attr("width", d => Math.max(0, x(d.x1) - x(d.x0) - 2))
-      .attr("height", d => height - y(d.length))
-      .attr("fill", "#7A2C2A")
-      .attr("opacity", 0.85);
-
-  // axis label
-  svg.append("text")
-    .attr("x", width/2)
-    .attr("y", height + 36)
-    .attr("text-anchor", "middle")
-    .style("font-size", "12px")
-    .text("Love score (BoC_final_0_2)");
-
-  // ---- 2) Concrete examples: high vs low
-  const topHigh = rows.slice().sort((a,b)=> b.score - a.score).slice(0, 6);
-  const topLow  = rows.slice().sort((a,b)=> a.score - b.score).slice(0, 6);
-
-  const renderList = (elId, items) => {
-    const el = document.getElementById(elId);
-    el.innerHTML = items.map(d => {
-      const title = (d.title_lat || d.title_ar || "Untitled").trim();
-      const meta = [
-        d.author ? d.author.trim() : null,
-        d.genre ? d.genre.trim() : null,
-        d.date ? d.date : null,
-        `score: ${d.score.toFixed(3)}`
-      ].filter(Boolean).join(" · ");
-      return `<li><div class="ex-title">${escapeHtml(title)}</div><div class="ex-meta">${escapeHtml(meta)}</div></li>`;
-    }).join("");
-  };
-
-  renderList("top-high", topHigh);
-  renderList("top-low", topLow);
-
-  // small summary
-  const s = document.getElementById("results-summary");
-  const mean = d3.mean(rows, d=>d.score);
-  const n = rows.length;
-  s.textContent = `${n.toLocaleString()} texts with a score · mean ${mean.toFixed(3)}.`;
-
-  function escapeHtml(str){
-    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-  }
-
-});
-</script>
-<p id="results-summary" class="muted"></p>
-
-<div id="results-chart" style="width:100%; height:320px;"></div>
-
-<div class="two-cols">
-  <section>
-    <h3>High love (examples)</h3>
-    <ol id="top-high" class="examples"></ol>
-  </section>
-  <section>
-    <h3>Low love (examples)</h3>
-    <ol id="top-low" class="examples"></ol>
-  </section>
-</div>
-
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
-
