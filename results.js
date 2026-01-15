@@ -1,21 +1,4 @@
-/* results.js — Results page (robust CSV parsing + interactive genre toggles) */
-const GENRE_MAP = {
-  b: "BIO", // Biography
-  d: "DEV", // Devotional / religious
-  n: "PHI", // Philosophy
-  p: "POE", // Poetry
-  r: "RHE", // Rhetoric / adab
-  k: "THE", // Theology / kalam
-};
-
-function normalizeGenre(raw) {
-  if (!raw) return null;
-  const s = String(raw).trim();
-  // if already BIO/DEV/...
-  if (["BIO","DEV","PHI","POE","RHE","THE"].includes(s.toUpperCase())) return s.toUpperCase();
-  const key = s.toLowerCase();
-  return GENRE_MAP[key] ?? null;
-}
+/* results.js — Results page (robust CSV parsing + interactive genre toggles + continuous scatter) */
 
 document.addEventListener("DOMContentLoaded", async () => {
   const CSV_PATH = "data/BoC_v3_EXTENDED_scored.csv";
@@ -23,25 +6,34 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Genres shown on site
   const GENRES = ["BIO", "DEV", "PHI", "POE", "RHE", "THE"];
 
-  // Your preferred palette (kept as-is)
+  // ✅ Keep your preferred palette
   const COLORS = {
     BIO: "#1E1916",  // ink (almost black)
     DEV: "#0E3A45",  // deep teal
     PHI: "#3E2A61",  // deep violet
     POE: "#7A2C2A",  // garnet
-    RHE: "#C46A74",  // dusty rose (brighter)
-    THE: "#C39A6B",   // (comment said green, but we keep your value)
+    RHE: "#C46A74",  // dusty rose
+    THE: "#C39A6B",  // tan
   };
 
-  // ---------------- helpers
+  // Map your CSV GenreCode to your 6 genres
+  const GENRE_MAP = {
+    b: "BIO",
+    d: "DEV",
+    n: "PHI",
+    p: "POE",
+    r: "RHE",
+    k: "THE",
+  };
+
+  // ---------- helpers
   const norm = (s) => String(s ?? "").trim();
   const lower = (s) => norm(s).toLowerCase();
 
   function findColumn(columns, candidates) {
     const cols = columns.map((c) => ({ raw: c, low: lower(c) }));
     for (const cand of candidates) {
-      const cLow = cand.toLowerCase();
-      const hit = cols.find((c) => c.low === cLow);
+      const hit = cols.find((c) => c.low === cand.toLowerCase());
       if (hit) return hit.raw;
     }
     return null;
@@ -57,47 +49,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function coerceNumber(x) {
-    // extracts first number safely (handles "400 AH", "400/...", etc.)
-    const m = String(x ?? "").replace(",", ".").match(/-?\d+(\.\d+)?/);
-    const n = m ? +m[0] : NaN;
+    const n = +String(x ?? "").replace(",", ".").trim();
     return Number.isFinite(n) ? n : null;
-  }
-
-  function toCenturyFromYear(y) {
-    return Math.floor((y - 1) / 100) + 1;
-  }
-
-  // IMPORTANT: in your CSV, `date` is a century index (1,2,3,...)
-  // but we still support year-like values if they appear.
-  function inferCenturyFromValue(v) {
-    if (v == null) return null;
-
-    // If it's a small integer: treat as century already
-    if (v >= 1 && v <= 30) return Math.round(v);
-
-    // If it's a year (AH): convert to century
-    if (v >= 50 && v <= 2000) {
-      const c = toCenturyFromYear(v);
-      if (c >= 1 && c <= 30) return c;
-    }
-    return null;
-  }
-
-  function inferGenre(row, genreCol) {
-    const v = norm(row[genreCol]);
-    if (!v) return null;
-
-    // direct
-    const u = v.toUpperCase();
-    if (GENRES.includes(u)) return u;
-
-    // map GenreCode (b/d/n/p/r/k)
-    const mapped = normalizeGenre(v);
-    if (mapped) return mapped;
-
-    // fallback: "POE - Poetic (...)" is in GenreLabel; sometimes GenreCode isn't clean
-    const found = GENRES.find((g) => u.includes(g));
-    return found || null;
   }
 
   function showError(selector, msg) {
@@ -106,13 +59,66 @@ document.addEventListener("DOMContentLoaded", async () => {
     el.innerHTML = `<p style="padding:1rem">${msg}</p>`;
   }
 
-  // ---------------- load CSV
+  function setText(id, v) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = v;
+  }
+
+  // stable hash → stable jitter (so points don't move on refresh)
+  function hashToUnit(str) {
+    const s = String(str ?? "");
+    let h = 2166136261;
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
+    // map to [0,1)
+    return (h >>> 0) / 4294967296;
+  }
+
+  // ✅ genre normalization (handles GenreCode = 'p' etc)
+  function normalizeGenre(raw) {
+    if (!raw) return null;
+    const s = norm(raw);
+
+    // already full tag?
+    const up = s.toUpperCase();
+    if (GENRES.includes(up)) return up;
+
+    // single-letter code
+    const k = s.toLowerCase();
+    if (GENRE_MAP[k]) return GENRE_MAP[k];
+
+    // if GenreLabel like "POE - Poetic (...)"
+    for (const g of GENRES) {
+      if (up.startsWith(g)) return g;
+    }
+    return null;
+  }
+
+  // Your `date` column looks like century AH (1..15)
+  function inferCenturyFromDate(v) {
+    const n = coerceNumber(v);
+    if (n == null) return null;
+
+    // treat as century if small integer
+    if (n >= 1 && n <= 30) return Math.round(n);
+
+    // otherwise could be year AH (not your case here, but safe)
+    if (n >= 50 && n <= 2000) {
+      const c = Math.floor((n - 1) / 100) + 1;
+      return c >= 1 && c <= 30 ? c : null;
+    }
+    return null;
+  }
+
+  // ---------- load CSV
   let raw;
   try {
     raw = await d3.csv(CSV_PATH);
   } catch (e) {
     console.error(e);
-    showError("#chart-global", `Could not load CSV at <code>${CSV_PATH}</code>. Check path and server.`);
+    showError("#chart-global", `Could not load CSV at <code>${CSV_PATH}</code>. Check path + server.`);
     showError("#chart-genre", `Could not load CSV at <code>${CSV_PATH}</code>.`);
     showError("#chart-scatter", `Could not load CSV at <code>${CSV_PATH}</code>.`);
     return;
@@ -125,78 +131,88 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const columns = raw.columns;
 
-  // ---------------- detect key columns (adapted to your headers)
-  const genreCodeCol = findColumn(columns, ["GenreCode"]) || findColumnFuzzy(columns, ["genrecode"]);
-  const genreLabelCol = findColumn(columns, ["GenreLabel"]) || findColumnFuzzy(columns, ["genrelabel"]);
+  // ---------- detect key columns (match your header)
+  const genreCol =
+    findColumn(columns, ["GenreCode", "genrecode", "genre_code", "genre"]) ||
+    findColumnFuzzy(columns, ["genre"]);
 
-  // your CSV uses `date` for century index
-  const dateCol = findColumn(columns, ["date", "Date"]) || findColumnFuzzy(columns, ["date"]);
+  const dateCol =
+    findColumn(columns, ["date", "Date", "century", "Century", "century_ah"]) ||
+    findColumnFuzzy(columns, ["date", "century"]);
 
   const loveCol =
-    findColumn(columns, ["BoC_final_0_2"]) ||
-    findColumn(columns, ["boc_final_0_2", "loveindex", "LoveIndex", "love_index"]) ||
-    findColumnFuzzy(columns, ["boc_final", "love", "index"]);
+    findColumn(columns, ["BoC_final_0_2", "boc_final_0_2"]) ||
+    findColumnFuzzy(columns, ["boc_final_0_2", "boc_final"]);
 
   const titleCol =
-    findColumn(columns, ["title_lat", "title", "Title", "book_title", "work_title"]) ||
+    findColumn(columns, ["title_lat", "title", "Title"]) ||
     findColumnFuzzy(columns, ["title"]);
 
   const authorCol =
-    findColumn(columns, ["author_lat", "author", "Author", "author_name"]) ||
+    findColumn(columns, ["author_lat", "author", "Author"]) ||
     findColumnFuzzy(columns, ["author"]);
 
   const uriCol =
-    findColumn(columns, ["version_uri", "uri", "URI", "work_id", "id", "ID"]) ||
-    findColumnFuzzy(columns, ["version_uri", "uri", "id"]);
-
-  // pick a genre column to read
-  const genreCol = genreCodeCol || genreLabelCol;
+    findColumn(columns, ["version_uri", "uri", "URI", "id", "ID"]) ||
+    findColumnFuzzy(columns, ["uri", "id"]);
 
   if (!genreCol || !loveCol || !dateCol) {
     showError(
       "#chart-global",
       `Could not detect required columns.<br/>
-      genre=<code>${genreCol || "none"}</code> · date=<code>${dateCol || "none"}</code> · love=<code>${loveCol || "none"}</code><br/>
+      genre=<code>${genreCol || "none"}</code> · love=<code>${loveCol || "none"}</code> · date/century=<code>${dateCol || "none"}</code><br/>
       Columns: <code>${columns.join(", ")}</code>`
     );
     return;
   }
 
-  // ---------------- normalize rows
+  // ---------- normalize rows
   const rows = [];
   for (const r of raw) {
-    const genre = inferGenre(r, genreCol);
+    const genre = normalizeGenre(r[genreCol]) || normalizeGenre(r["GenreLabel"]);
     if (!genre) continue;
 
-    const v = coerceNumber(r[dateCol]);
-    const century = inferCenturyFromValue(v);
+    const century = inferCenturyFromDate(r[dateCol]);
     if (!century) continue;
-
-    // keep your window 1..15 (since your data clearly has century=1)
-    if (century < 1 || century > 15) continue;
 
     const love = coerceNumber(r[loveCol]);
     if (love == null) continue;
 
     const loveClamped = Math.max(0, Math.min(2, love));
+
     const title = titleCol ? norm(r[titleCol]) : "";
     const author = authorCol ? norm(r[authorCol]) : "";
     const uri = uriCol ? norm(r[uriCol]) : "";
 
-    rows.push({ genre, century, love: loveClamped, title, author, uri });
+    // ✅ continuous time (approx): spread within century with STABLE jitter
+    const baseYear = (century - 1) * 100;       // start of century
+    const jitter = Math.floor(hashToUnit(uri || title || author) * 100); // 0..99 stable
+    const yearApprox = baseYear + jitter + 1;   // 1..100 within century
+
+    rows.push({
+      genre,
+      century,
+      year: yearApprox,
+      love: loveClamped,
+      title,
+      author,
+      uri
+    });
   }
 
   if (rows.length < 20) {
     showError(
       "#chart-global",
       `Data loaded but too few usable rows after parsing (${rows.length}).<br/>
-      genreCol=<code>${genreCol}</code> · dateCol=<code>${dateCol}</code> · loveCol=<code>${loveCol}</code>`
+      genreCol=<code>${genreCol}</code> · loveCol=<code>${loveCol}</code> · dateCol=<code>${dateCol}</code>`
     );
     return;
   }
 
-  // ---------------- aggregates
-  const centuries = d3.range(1, 16); // 1..15
+  // ---------- aggregates (by century)
+  const MIN_C = 2;    // keep your results page framing
+  const MAX_C = 15;
+  const centuries = d3.range(MIN_C, MAX_C + 1);
 
   const pooled = centuries
     .map((c) => {
@@ -216,31 +232,32 @@ document.addEventListener("DOMContentLoaded", async () => {
     byGenre.push({ genre: g, values: series });
   }
 
-  // ---------------- fill stats (still hard-coded like you had)
+  // ---------- stats numbers (your current displayed ones)
   setText("q_century", "−0.1228 (p < 0.001)");
   setText("q_century2", "+0.0065 (p < 0.001)");
   setText("q_r2", "0.027");
-  setText("q_interp", "The positive quadratic term indicates curvature: after a long decline, the trend bends upward in later centuries.");
+  setText(
+    "q_interp",
+    "The positive quadratic term indicates curvature: after a long decline, the trend bends upward in later centuries."
+  );
 
   setText("s_century", "−0.0527 (p < 0.001)");
   setText("s_post12", "+1.8875 (p < 0.001)");
   setText("s_cpost12", "−0.0955 (p = 0.007)");
   setText("s_r2", "0.041");
-  setText("s_interp", "The model detects a break, but the post-12 period does not form a clean recovery slope. This suggests a change in dynamics rather than a simple monotonic return.");
+  setText(
+    "s_interp",
+    "The model detects a break, but the post-12 period does not form a clean recovery slope. This suggests a change in dynamics rather than a simple monotonic return."
+  );
 
-  function setText(id, v) {
-    const el = document.getElementById(id);
-    if (el) el.textContent = v;
-  }
-
-  // ---------------- render
+  // ---------- render charts
   drawGlobalLine("#chart-global", pooled);
   drawGenreLines("#chart-genre", byGenre);
-  drawScatter("#chart-scatter", rows);
+  drawScatterContinuous("#chart-scatter", rows);
   renderSpotlights(rows);
 
   // ============================================================
-  // Charts
+  // Charts helpers
   // ============================================================
 
   function baseSvg(container, height = 420) {
@@ -270,7 +287,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([1, 15]).range([0, plotW]);
+    const x = d3.scaleLinear().domain([MIN_C, MAX_C]).range([0, plotW]);
     const y = d3.scaleLinear().domain([0, 2]).range([plotH, 0]);
 
     g.append("g")
@@ -280,7 +297,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     g.append("g")
       .attr("transform", `translate(0,${plotH})`)
-      .call(d3.axisBottom(x).ticks(15).tickFormat(d3.format("d")));
+      .call(d3.axisBottom(x).ticks(MAX_C - MIN_C).tickFormat(d3.format("d")));
 
     g.append("g").call(d3.axisLeft(y).ticks(5));
 
@@ -293,7 +310,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     g.append("path")
       .datum(data)
       .attr("fill", "none")
-      .attr("stroke", COLORS.POE) // garnet
+      .attr("stroke", COLORS.POE)
       .attr("stroke-width", 2.6)
       .attr("opacity", 0.95)
       .attr("d", line);
@@ -341,7 +358,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([1, 15]).range([0, plotW]);
+    const x = d3.scaleLinear().domain([MIN_C, MAX_C]).range([0, plotW]);
     const y = d3.scaleLinear().domain([0, 2]).range([plotH, 0]);
 
     g.append("g")
@@ -351,7 +368,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     g.append("g")
       .attr("transform", `translate(0,${plotH})`)
-      .call(d3.axisBottom(x).ticks(15).tickFormat(d3.format("d")));
+      .call(d3.axisBottom(x).ticks(MAX_C - MIN_C).tickFormat(d3.format("d")));
 
     g.append("g").call(d3.axisLeft(y).ticks(5));
 
@@ -363,7 +380,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const hidden = new Set();
     const tip = addTip(container);
-
     const paths = new Map();
     const pts = new Map();
 
@@ -457,7 +473,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  function drawScatter(selector, rows) {
+  // ============================================================
+  // ✅ Scatter — CONTINUOUS time axis (year approx)
+  // ============================================================
+  function drawScatterContinuous(selector, rows) {
     const container = document.querySelector(selector);
     if (!container) return;
 
@@ -468,7 +487,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([1, 15]).range([0, plotW]);
+    const xMin = d3.min(rows, (d) => d.year);
+    const xMax = d3.max(rows, (d) => d.year);
+
+    const x = d3.scaleLinear().domain([xMin, xMax]).range([0, plotW]);
     const y = d3.scaleLinear().domain([0, 2]).range([plotH, 0]);
 
     g.append("g")
@@ -478,7 +500,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     g.append("g")
       .attr("transform", `translate(0,${plotH})`)
-      .call(d3.axisBottom(x).ticks(15).tickFormat(d3.format("d")));
+      .call(d3.axisBottom(x).ticks(12).tickFormat(d3.format("d")));
+
     g.append("g").call(d3.axisLeft(y).ticks(5));
 
     const tip = addTip(container);
@@ -490,7 +513,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       .data(rows)
       .enter()
       .append("circle")
-      .attr("cx", (d) => x(d.century))
+      .attr("cx", (d) => x(d.year))
       .attr("cy", (d) => y(d.love))
       .attr("r", 2.7)
       .attr("fill", (d) => COLORS[d.genre] || "#999")
@@ -506,7 +529,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           .style("opacity", 1)
           .html(
             `<strong>${title}</strong><br/>${author}<br/>
-             <span style="opacity:.9">${d.genre} · century ${d.century} AH · Love Index: ${d.love.toFixed(
+             <span style="opacity:.9">${d.genre} · ~${Math.round(d.year)} AH · Love Index: ${d.love.toFixed(
               3
             )}</span>`
           )
@@ -521,6 +544,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         tip.style("opacity", 0);
       });
 
+    // legend toggle
     const lg = g.append("g").attr("transform", `translate(${plotW + 18}, 8)`);
 
     GENRES.forEach((k, i) => {
@@ -560,7 +584,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ============================================================
-  // Spotlights
+  // Spotlights (top/bottom)
   // ============================================================
   function renderSpotlights(rows) {
     const topEl = document.getElementById("top-texts");
@@ -581,9 +605,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       const li = document.createElement("li");
       const t = d.title || "(title unavailable)";
       const a = d.author ? ` — ${d.author}` : "";
-      li.innerHTML = `<strong>${t}</strong>${a}<br/><span class="note">${d.genre} · century ${d.century} AH · LoveIndex: ${d.love.toFixed(
-        3
-      )}</span>`;
+      li.innerHTML = `<strong>${t}</strong>${a}<br/><span class="note">${d.genre} · ~${Math.round(
+        d.year
+      )} AH · LoveIndex: ${d.love.toFixed(3)}</span>`;
       return li;
     }
   }

@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,600;6..72,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Load D3 ONCE (correct URL) -->
+  <!-- ✅ Keep ONLY one correct D3 import -->
   <script src="https://d3js.org/d3.v7.min.js" defer></script>
   <script src="results.js" defer></script>
 </head>
@@ -90,8 +90,8 @@
             Mean Love Index (0–2) by century (AH), all genres combined.
           </p>
           <p>
-            At this stage, the corpus suggests a progressive decline starting around the 1st–2nd centuries AH,
-            with a possible rebound in the 13th–14th centuries AH. This is a pattern of discursive visibility
+            At this stage, the corpus suggests a progressive decline starting around the 2nd century AH,
+            with a possible rebound in later centuries. This is a pattern of discursive visibility
             (what is expressed, preserved, and digitized), not a direct measure of private emotions.
           </p>
         </div>
@@ -157,15 +157,15 @@
         <div class="paper card shadow panel">
           <h2 class="sec-title">Explore the corpus: every text on the timeline</h2>
           <p class="note">
-            Each point is a text. x-axis: century (AH) · y-axis: Love Index (0–2). Hover to reveal title, author, genre, century, score.
-            Click legend items to hide/show genres.
+            Each point is a text. x-axis: time (AH, continuous approximation) · y-axis: Love Index (0–2).
+            Hover to reveal title, author, genre, time, score. Click legend items to hide/show genres.
           </p>
-          <div id="chart-scatter" class="vizbox" aria-label="Scatter plot: texts by century and Love Index"></div>
+          <div id="chart-scatter" class="vizbox" aria-label="Scatter plot: texts by time and Love Index"></div>
 
           <h3 class="sec-title" style="margin-top:1.2rem;">What to look for</h3>
           <ul>
             <li>outliers (very high / very low)</li>
-            <li>clusters by century</li>
+            <li>clusters over time</li>
             <li>whether dispersion changes over time</li>
           </ul>
         </div>
