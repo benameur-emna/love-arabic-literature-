@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Results — Research on Arabic Literature & Love</title>
+  <meta name="description" content="Key findings and results from the research on the evolution of love in Arabic-Islamic literature." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,600;6..72,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="theme-garnet">
+  
+<a class="rose-skip left" href="index.html" aria-label="Back to home">
+  <svg width="16" height="16" viewBox="0 0 120 120" role="img" aria-hidden="true" focusable="false">
+    <g fill="none" stroke="#F6F1E7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M60 30 C58 50, 58 80, 60 95" />
+      <path d="M54 62 C40 58, 38 68, 52 72" />
+      <path d="M66 62 C80 58, 82 68, 68 72" />
+    </g>
+    <path d="M60 28 c18 0 30 10 30 22 s-12 22-30 22 s-30-10-30-22 s12-22 30-22z" fill="#B86A6A"/>
+  </svg>
+  <span class="visually-hidden">Back to home</span>
+</a>
+
+  <header class="site-hdr" role="banner">
+    <div class="wrap hdr__in">
+      <nav class="nav" aria-label="Main">
+        <a href="index.html">Home</a>
+        <a href="index.html#project">About</a>
+        <a href="methods.html">Data & Methods</a>
+        <a href="#results">Results</a>
+        <a href="index.html#team">Team</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="h-en">
+      <div class="wrap hero__in">
+        <h1 id="h-en" class="hero-line en">Research Results</h1>
+        <p class="hero-line ar" dir="rtl" lang="ar">نتائج البحث</p>
+        <p class="hero-meta">Shifting paradigms of love in the Arabic tradition</p>
+      </div>
+      <div class="sep" aria-hidden="true">
+        <svg class="fleuron" viewBox="0 0 120 24" role="img" aria-label="fleuron">
+          <g fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12,12 c6,-8 18,-8 24,0 c-6,8 -18,8 -24,0 z" />
+            <path d="M84,12 c-6,-8 -18,-8 -24,0 c6,8 18,8 24,0 z" />
+            <circle cx="60" cy="12" r="3.5"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <section id="viz" class="section">
+      <div class="wrap narrow">
+        <div class="paper card shadow panel">
+          <h2 class="sec-title">Conceptual Evolution of Love Terms</h2>
+          <div id="chart" style="width: 100%; height: 500px; background: #fff; margin-top: 1rem;"></div>
+          <p class="note" style="margin-top: 1rem; text-align: center;">Relative prominence of key concepts (Hubb vs. 'Ishq) across centuries (Sample Data)</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="results" class="section project">
+      <div class="wrap narrow">
+        <div class="paper card shadow panel">
+          <h2 id="results-title" class="sec-title">Key Findings</h2>
+          <p>
+            Our analysis reveals a dynamic landscape where the language of love reflects broader intellectual and social shifts:
+          </p>
+          <ul class="bullets">
+            <li><strong>The Rise of 'Ishq:</strong> While early texts favor <em>Hubb</em> for its ethical and spiritual breadth, <em>'Ishq</em> gains prominence in later centuries as a technical term in mystical and philosophical discourses.</li>
+            <li><strong>Genre Specificity:</strong> Love metaphors in poetry maintain high continuity, whereas prose registers (theology, rhetoric) show significant adaptation to evolving ethical frameworks.</li>
+            <li><strong>Vocabulary Diversification:</strong> A marked increase in the diversity of love-related terms during the 3rd and 4th centuries AH, coinciding with the "Golden Age" of Arabic literature.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-ftr">
+    <div class="wrap ftr__in">
+      <p>© <span id="year"></span> · Project Name — ENS | Institut Jean Nicod</p>
+      <p><a href="index.html">Home</a> · <a href="#">Terms</a></p>
+    </div>
+  </footer>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+
+  // ---- CONFIG: adjust if your column names differ
+  const CSV_PATH = "data/BoC_v3_EXTENDED_scored.csv";
+  const SCORE_COL = "BoC_final_0_2";     // your love score column (change if needed)
+  const DATE_COL  = "date";             // change if needed
+  const GENRE_COL = "GenreLabel";       // change if needed
+  const TITLE_AR  = "title_ar";         // optional
+  const TITLE_LAT = "title_lat";        // optional
+  const AUTHOR    = "author_lat";       // optional
+  // --------------------------------------------
+
+  const raw = await d3.csv(CSV_PATH);
+
+  // detect columns if some are missing
+  const cols = raw.columns;
+  const scoreCol = cols.includes(SCORE_COL) ? SCORE_COL : cols.find(c => c.toLowerCase().includes("boc_final")) || SCORE_COL;
+  const dateCol  = cols.includes(DATE_COL)  ? DATE_COL  : cols.find(c => c.toLowerCase().includes("date") || c.toLowerCase().includes("year")) || DATE_COL;
+  const genreCol = cols.includes(GENRE_COL) ? GENRE_COL : cols.find(c => c.toLowerCase().includes("genre")) || GENRE_COL;
+
+  // parse
+  const rows = raw.map(d => ({
+    score: +d[scoreCol],
+    date: d[dateCol],
+    genre: d[genreCol],
+    title_ar: d[TITLE_AR],
+    title_lat: d[TITLE_LAT],
+    author: d[AUTHOR]
+  })).filter(d => Number.isFinite(d.score));
+
+  // ---- 1) Histogram
+  const chartEl = document.getElementById('results-chart');
+  chartEl.innerHTML = "";
+
+  const margin = {top: 22, right: 18, bottom: 44, left: 46};
+  const width = chartEl.clientWidth - margin.left - margin.right;
+  const height = 320 - margin.top - margin.bottom;
+
+  const svg = d3.select(chartEl)
+    .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  const x = d3.scaleLinear()
+    .domain(d3.extent(rows, d => d.score)).nice()
+    .range([0, width]);
+
+  const bins = d3.bin()
+    .domain(x.domain())
+    .thresholds(22)
+    (rows.map(d => d.score));
+
+  const y = d3.scaleLinear()
+    .domain([0, d3.max(bins, b => b.length) || 1]).nice()
+    .range([height, 0]);
+
+  svg.append("g")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x).ticks(6));
+
+  svg.append("g")
+    .call(d3.axisLeft(y).ticks(5));
+
+  // subtle grid
+  svg.append("g")
+    .attr("opacity", 0.10)
+    .call(d3.axisLeft(y).tickSize(-width).tickFormat(""));
+
+  // bars
+  svg.selectAll("rect")
+    .data(bins)
+    .enter().append("rect")
+      .attr("x", d => x(d.x0) + 1)
+      .attr("y", d => y(d.length))
+      .attr("width", d => Math.max(0, x(d.x1) - x(d.x0) - 2))
+      .attr("height", d => height - y(d.length))
+      .attr("fill", "#7A2C2A")
+      .attr("opacity", 0.85);
+
+  // axis label
+  svg.append("text")
+    .attr("x", width/2)
+    .attr("y", height + 36)
+    .attr("text-anchor", "middle")
+    .style("font-size", "12px")
+    .text("Love score (BoC_final_0_2)");
+
+  // ---- 2) Concrete examples: high vs low
+  const topHigh = rows.slice().sort((a,b)=> b.score - a.score).slice(0, 6);
+  const topLow  = rows.slice().sort((a,b)=> a.score - b.score).slice(0, 6);
+
+  const renderList = (elId, items) => {
+    const el = document.getElementById(elId);
+    el.innerHTML = items.map(d => {
+      const title = (d.title_lat || d.title_ar || "Untitled").trim();
+      const meta = [
+        d.author ? d.author.trim() : null,
+        d.genre ? d.genre.trim() : null,
+        d.date ? d.date : null,
+        `score: ${d.score.toFixed(3)}`
+      ].filter(Boolean).join(" · ");
+      return `<li><div class="ex-title">${escapeHtml(title)}</div><div class="ex-meta">${escapeHtml(meta)}</div></li>`;
+    }).join("");
+  };
+
+  renderList("top-high", topHigh);
+  renderList("top-low", topLow);
+
+  // small summary
+  const s = document.getElementById("results-summary");
+  const mean = d3.mean(rows, d=>d.score);
+  const n = rows.length;
+  s.textContent = `${n.toLocaleString()} texts with a score · mean ${mean.toFixed(3)}.`;
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  }
+
+});
+</script>
+<p id="results-summary" class="muted"></p>
+
+<div id="results-chart" style="width:100%; height:320px;"></div>
+
+<div class="two-cols">
+  <section>
+    <h3>High love (examples)</h3>
+    <ol id="top-high" class="examples"></ol>
+  </section>
+  <section>
+    <h3>Low love (examples)</h3>
+    <ol id="top-low" class="examples"></ol>
+  </section>
+</div>
+
+</body>
+</html>
+
