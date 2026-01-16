@@ -35,7 +35,7 @@
       <nav class="nav" aria-label="Main">
         <a href="index.html">Home</a>
         <a href="index.html#project">About</a>
-        <a href="data.html">Data</a>
+        <a href="methods.html">Data</a>
         <a href="methods.html">Methods</a>
         <a href="results.html">Results</a>
         <a href="index.html#team">Team</a>
@@ -73,13 +73,17 @@
         <div class="paper card shadow panel">
           <h2 class="sec-title">Overview</h2>
           <p class="leadish">
-            We don’t “detect love” with a single keyword. We map love discourse as a set of <em>registers</em>
-            (desire, beauty, metaphor, spiritual love…), then estimate how densely each register appears in a text and how coherently it clusters around explicit love anchors.
+            Our goal is not to “measure love” as an emotion, but to estimate the semantic density of love-related discourse in each text. We do so using a Bag-of-Concepts (BoC) model: instead of counting isolated words (Bag-of-Words), we estimate how strongly a text aligns with conceptual registers of love (explicit love, desire, beauty, metaphor, spiritual love, etc.), using root-based lexical cues adapted to Arabic morphology.
+            <div class="callout">
+            <p>Each text receives: </p>
+            <p>
+            - nine register scores (BoC dimensions), each on a continuous scale 0–2, and
+            </p>
+            <p>  - a Love Index, a single composite score designed to approximate the overall “love intensity” of the text in a way that remains comparable across genres and centuries.
+            </p>
+            </div>
           </p>
-          <div class="callout">
-          <p>Each text receives:</p>
-          <p>  - nine register scores (BoC dimensions), each on a continuous scale 0–2, and</p>
-          <p>  - nine register scores (BoC dimensions), each on a continuous scale 0–2, and a Love Index, a single composite score designed to approximate the overall “love intensity” of the text in a way that remains comparable across genres and centuries.</p>
+
           </div>
         </div>
       </div>
@@ -252,14 +256,14 @@
                 <span class="acc-title">Love Index </span>
               </summary>
               <div class="acc-body">
-  <p>
+                  <p>
     The Love Index is <strong>not</strong> a direct sum of BoC scores. BoC registers are the starting point, but
     the final score also accounts for how Arabic love discourse works: rarity, idioms, contextual coherence,
     and fair comparison across texts.
   </p>
 
   <div class="callout">
-    <p><strong>What it measures.</strong> The density and coherence of <em>love discourse</em> in a text — not the author’s feelings,
+    <p><strong>What it measures.</strong> The density and coherence of <em>love discourse</em> in a text, not the author’s feelings,
       and not a simple keyword frequency.</p>
   </div>
 
@@ -284,13 +288,15 @@
     <div class="mf-chip">→ Density / 1,000 tokens</div>
   </div>
 
-  <h3 class="mini-title" style="margin-top:1.2rem;">Transparent aggregation </h3>
+  <h3 class="mini-title" style="margin-top:1.2rem;">Transparent aggregation (readable baseline)</h3>
   <p class="note">
-    After these adjustments, we summarize registers using a weighted mean, not as the whole method,
-    but as a readable final lens. We keep weights manual : readable, debatable, testable, to get the closest possible to the common perception of 'Love' as a universal concept.
+    After these adjustments, we summarize registers using a weighted mean, to get the closest possible to the most common perception of 'Love' as a concept. 
+    We keep weights manual (for now): readable, debatable, testable. The weighted aggregation step is only one component of the index.
+    Weights operate on already adjusted register scores and do not represent
+    raw frequency counts.
   </p>
 
-  <!-- OPTIONAL: keep your sliders UI if you want -->
+<!-- OPTIONAL: keep your sliders UI if you want -->
   <div class="weights">
     <div class="weights-head">
       <h3 class="mini-title">Baseline weights (editable)</h3>
@@ -301,15 +307,15 @@
 
     <div class="weights-foot">
       <div class="eq">
-        <div class="eq-label">Aggregation formula </div>
+        <div class="eq-label">Aggregation formula (normalized weighted mean)</div>
         <code id="eqStr" class="eq-code"></code>
       </div>
 
-    </div>
   </div>
 </div>
 
-              </div>
+
+
             </details>
 
             <details>
@@ -330,7 +336,13 @@
               </div>
             </details>
 
-        
+            
+
+          </div>
+
+        </div>
+      </div>
+    </section>
 
   </main>
 

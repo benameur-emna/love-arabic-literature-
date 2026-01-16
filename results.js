@@ -1,5 +1,5 @@
-/* results.js — Results page (robust CSV parsing + interactive genre toggles + continuous scatter) */
-
+/* results.js — Results page (robust CSV parsing + interactive genre toggles + continuous scatter bounded to 0–1500 AH) */
+console.log("✅ results.js loaded — v1500");
 document.addEventListener("DOMContentLoaded", async () => {
   const CSV_PATH = "data/BoC_v3_EXTENDED_scored.csv";
 
@@ -8,12 +8,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ✅ Keep your preferred palette
   const COLORS = {
-    BIO: "#1E1916",  // ink (almost black)
-    DEV: "#0E3A45",  // deep teal
-    PHI: "#3E2A61",  // deep violet
-    POE: "#7A2C2A",  // garnet
-    RHE: "#C46A74",  // dusty rose
-    THE: "#C39A6B",  // tan
+    BIO: "#1E1916",
+    DEV: "#0E3A45",
+    PHI: "#3E2A61",
+    POE: "#7A2C2A",
+    RHE: "#C46A74",
+    THE: "#C39A6B",
   };
 
   // Map your CSV GenreCode to your 6 genres
@@ -25,6 +25,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     r: "RHE",
     k: "THE",
   };
+
+  // ✅ scatter X-axis bounds
+  const SCATTER_X_MIN = 0;
+  const SCATTER_X_MAX = 1500;
 
   // ---------- helpers
   const norm = (s) => String(s ?? "").trim();
@@ -72,20 +76,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       h ^= s.charCodeAt(i);
       h = Math.imul(h, 16777619);
     }
-    // map to [0,1)
-    return (h >>> 0) / 4294967296;
+    return (h >>> 0) / 4294967296; // [0,1)
   }
 
-  // ✅ genre normalization (handles GenreCode = 'p' etc)
   function normalizeGenre(raw) {
     if (!raw) return null;
     const s = norm(raw);
 
-    // already full tag?
     const up = s.toUpperCase();
     if (GENRES.includes(up)) return up;
 
-    // single-letter code
     const k = s.toLowerCase();
     if (GENRE_MAP[k]) return GENRE_MAP[k];
 
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // treat as century if small integer
     if (n >= 1 && n <= 30) return Math.round(n);
 
-    // otherwise could be year AH (not your case here, but safe)
+    // otherwise could be AH year (rare here)
     if (n >= 50 && n <= 2000) {
       const c = Math.floor((n - 1) / 100) + 1;
       return c >= 1 && c <= 30 ? c : null;
@@ -184,10 +184,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const author = authorCol ? norm(r[authorCol]) : "";
     const uri = uriCol ? norm(r[uriCol]) : "";
 
-    // ✅ continuous time (approx): spread within century with STABLE jitter
-    const baseYear = (century - 1) * 100;       // start of century
+    // continuous time (approx): spread within century with stable jitter
+    const baseYear = (century - 1) * 100; // start of century
     const jitter = Math.floor(hashToUnit(uri || title || author) * 100); // 0..99 stable
-    const yearApprox = baseYear + jitter + 1;   // 1..100 within century
+    const yearApprox = baseYear + jitter + 1;
 
     rows.push({
       genre,
@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       love: loveClamped,
       title,
       author,
-      uri
+      uri,
     });
   }
 
@@ -209,8 +209,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // ---------- aggregates (by century)
-  const MIN_C = 2;    // keep your results page framing
+  // ---------- aggregates (by century) for the line charts
+  const MIN_C = 2;
   const MAX_C = 15;
   const centuries = d3.range(MIN_C, MAX_C + 1);
 
@@ -236,25 +236,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   setText("q_century", "−0.1228 (p < 0.001)");
   setText("q_century2", "+0.0065 (p < 0.001)");
   setText("q_r2", "0.027");
-  setText(
-    "q_interp",
-    "The positive quadratic term indicates curvature: after a long decline, the trend bends upward in later centuries."
-  );
+  setText("q_interp", "The positive quadratic term indicates curvature: after a long decline, the trend bends upward in later centuries.");
 
   setText("s_century", "−0.0527 (p < 0.001)");
   setText("s_post12", "+1.8875 (p < 0.001)");
   setText("s_cpost12", "−0.0955 (p = 0.007)");
   setText("s_r2", "0.041");
-  setText(
-    "s_interp",
-    "The model detects a break, but the post-12 period does not form a clean recovery slope. This suggests a change in dynamics rather than a simple monotonic return."
-  );
+  setText("s_interp", "The model detects a break, but the post-12 period does not form a clean recovery slope. This suggests a change in dynamics rather than a simple monotonic return.");
 
   // ---------- render charts
-  drawGlobalLine("#chart-global", pooled);
-  drawGenreLines("#chart-genre", byGenre);
-  drawScatterContinuous("#chart-scatter", rows);
-  renderSpotlights(rows);
+  drawGlobalLine("#chart-global", pooled, MIN_C, MAX_C, COLORS.POE);
+  drawGenreLines("#chart-genre", byGenre, MIN_C, MAX_C, GENRES, COLORS);
+  drawScatter("#chart-scatter", rows);
+  renderSpotlights(rows, SCATTER_X_MIN, SCATTER_X_MAX);
 
   // ============================================================
   // Charts helpers
@@ -276,7 +270,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return d3.select(container).append("div").attr("class", "viztip").style("opacity", 0);
   }
 
-  function drawGlobalLine(selector, data) {
+  function drawGlobalLine(selector, data, minC, maxC, strokeColor) {
     const container = document.querySelector(selector);
     if (!container) return;
 
@@ -287,7 +281,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([MIN_C, MAX_C]).range([0, plotW]);
+    const x = d3.scaleLinear().domain([minC, maxC]).range([0, plotW]);
     const y = d3.scaleLinear().domain([0, 2]).range([plotH, 0]);
 
     g.append("g")
@@ -297,12 +291,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     g.append("g")
       .attr("transform", `translate(0,${plotH})`)
-      .call(d3.axisBottom(x).ticks(MAX_C - MIN_C).tickFormat(d3.format("d")));
+      .call(d3.axisBottom(x).ticks(maxC - minC).tickFormat(d3.format("d")));
 
     g.append("g").call(d3.axisLeft(y).ticks(5));
 
-    const line = d3
-      .line()
+    const line = d3.line()
       .x((d) => x(d.century))
       .y((d) => y(d.mean))
       .curve(d3.curveMonotoneX);
@@ -310,7 +303,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     g.append("path")
       .datum(data)
       .attr("fill", "none")
-      .attr("stroke", COLORS.POE)
+      .attr("stroke", strokeColor)
       .attr("stroke-width", 2.6)
       .attr("opacity", 0.95)
       .attr("d", line);
@@ -324,17 +317,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       .attr("cx", (d) => x(d.century))
       .attr("cy", (d) => y(d.mean))
       .attr("r", 3.2)
-      .attr("fill", COLORS.POE)
+      .attr("fill", strokeColor)
       .attr("opacity", 0.0)
       .on("mouseenter", (event, d) => {
         d3.select(event.currentTarget).attr("opacity", 0.95);
-        tip
-          .style("opacity", 1)
-          .html(
-            `<strong>All genres</strong> · century ${d.century} AH<br/>mean Love Index: ${d.mean.toFixed(
-              3
-            )}<br/>n=${d.n}`
-          )
+        tip.style("opacity", 1)
+          .html(`<strong>All genres</strong> · century ${d.century} AH<br/>mean Love Index: ${d.mean.toFixed(3)}<br/>n=${d.n}`)
           .style("left", `${event.offsetX + 12}px`)
           .style("top", `${event.offsetY - 8}px`);
       })
@@ -347,7 +335,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
   }
 
-  function drawGenreLines(selector, seriesByGenre) {
+  function drawGenreLines(selector, seriesByGenre, minC, maxC, genres, colors) {
     const container = document.querySelector(selector);
     if (!container) return;
 
@@ -358,7 +346,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([MIN_C, MAX_C]).range([0, plotW]);
+    const x = d3.scaleLinear().domain([minC, maxC]).range([0, plotW]);
     const y = d3.scaleLinear().domain([0, 2]).range([plotH, 0]);
 
     g.append("g")
@@ -368,12 +356,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     g.append("g")
       .attr("transform", `translate(0,${plotH})`)
-      .call(d3.axisBottom(x).ticks(MAX_C - MIN_C).tickFormat(d3.format("d")));
+      .call(d3.axisBottom(x).ticks(maxC - minC).tickFormat(d3.format("d")));
 
     g.append("g").call(d3.axisLeft(y).ticks(5));
 
-    const line = d3
-      .line()
+    const line = d3.line()
       .x((d) => x(d.century))
       .y((d) => y(d.mean))
       .curve(d3.curveMonotoneX);
@@ -386,19 +373,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     for (const s of seriesByGenre) {
       const k = s.genre;
 
-      const p = g
-        .append("path")
+      const p = g.append("path")
         .datum(s.values)
         .attr("fill", "none")
-        .attr("stroke", COLORS[k] || "#999")
+        .attr("stroke", colors[k] || "#999")
         .attr("stroke-width", 2.4)
         .attr("opacity", 0.92)
         .attr("d", line);
 
       paths.set(k, p);
 
-      const circles = g
-        .selectAll(`.pt-${k}`)
+      const circles = g.selectAll(`.pt-${k}`)
         .data(s.values)
         .enter()
         .append("circle")
@@ -406,18 +391,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         .attr("cx", (d) => x(d.century))
         .attr("cy", (d) => y(d.mean))
         .attr("r", 3.0)
-        .attr("fill", COLORS[k] || "#999")
+        .attr("fill", colors[k] || "#999")
         .attr("opacity", 0.0)
         .on("mouseenter", (event, d) => {
           if (hidden.has(k)) return;
           d3.select(event.currentTarget).attr("opacity", 0.95);
-          tip
-            .style("opacity", 1)
-            .html(
-              `<strong>${k}</strong> · century ${d.century} AH<br/>mean Love Index: ${d.mean.toFixed(
-                3
-              )}<br/>n=${d.n}`
-            )
+          tip.style("opacity", 1)
+            .html(`<strong>${k}</strong> · century ${d.century} AH<br/>mean Love Index: ${d.mean.toFixed(3)}<br/>n=${d.n}`)
             .style("left", `${event.offsetX + 12}px`)
             .style("top", `${event.offsetY - 8}px`);
         })
@@ -434,23 +414,20 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const lg = g.append("g").attr("transform", `translate(${plotW + 18}, 8)`);
 
-    GENRES.forEach((k, i) => {
-      const row = lg
-        .append("g")
+    genres.forEach((k, i) => {
+      const row = lg.append("g")
         .attr("transform", `translate(0, ${i * 20})`)
         .attr("class", "legend-clickable")
         .on("click", () => toggle(k, row));
 
-      row
-        .append("rect")
+      row.append("rect")
         .attr("width", 12)
         .attr("height", 12)
         .attr("rx", 3)
         .attr("y", -9)
-        .attr("fill", COLORS[k] || "#999");
+        .attr("fill", colors[k] || "#999");
 
-      row
-        .append("text")
+      row.append("text")
         .attr("x", 18)
         .attr("y", 0)
         .style("font-size", "12px")
@@ -474,125 +451,118 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   // ============================================================
-  // ✅ Scatter — CONTINUOUS time axis (year approx)
+  // ✅ Scatter — bounded x-axis + filtered outliers
   // ============================================================
-  function drawScatterContinuous(selector, rows) {
-    const container = document.querySelector(selector);
-    if (!container) return;
+ function drawScatter(selector, rowsAll) {
+  const container = document.querySelector(selector);
+  if (!container) return;
 
-    const { svg, width, height } = baseSvg(container, 520);
-    const margin = { top: 22, right: 120, bottom: 44, left: 54 };
-    const plotW = width - margin.left - margin.right;
-    const plotH = height - margin.top - margin.bottom;
+  // ✅ 1) FILTER OUTLIERS (hard)
+  const rows = rowsAll.filter(d => Number.isFinite(d.year) && d.year >= 1 && d.year <= 1500);
 
-    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+  const { svg, width, height } = baseSvg(container, 520);
+  const margin = { top: 22, right: 120, bottom: 44, left: 54 };
+  const plotW = width - margin.left - margin.right;
+  const plotH = height - margin.top - margin.bottom;
 
-    const xMin = d3.min(rows, (d) => d.year);
-    const xMax = d3.max(rows, (d) => d.year);
+  const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleLinear().domain([xMin, xMax]).range([0, plotW]);
-    const y = d3.scaleLinear().domain([0, 2]).range([plotH, 0]);
+  // ✅ 2) FORCE DOMAIN
+  const x = d3.scaleLinear().domain([0, 1500]).range([0, plotW]);
+  const y = d3.scaleLinear().domain([0, 2]).range([plotH, 0]);
 
-    g.append("g")
-      .attr("class", "grid")
-      .call(d3.axisLeft(y).ticks(5).tickSize(-plotW).tickFormat(""))
-      .attr("opacity", 0.16);
+  g.append("g")
+    .attr("class", "grid")
+    .call(d3.axisLeft(y).ticks(5).tickSize(-plotW).tickFormat(""))
+    .attr("opacity", 0.16);
 
-    g.append("g")
-      .attr("transform", `translate(0,${plotH})`)
-      .call(d3.axisBottom(x).ticks(12).tickFormat(d3.format("d")));
+  g.append("g")
+    .attr("transform", `translate(0,${plotH})`)
+    .call(d3.axisBottom(x).tickValues(d3.range(0, 1501, 200)).tickFormat(d3.format("d")));
 
-    g.append("g").call(d3.axisLeft(y).ticks(5));
+  g.append("g").call(d3.axisLeft(y).ticks(5));
 
-    const tip = addTip(container);
-    const hidden = new Set();
+  const tip = addTip(container);
+  const hidden = new Set();
 
-    const dots = g
-      .append("g")
-      .selectAll("circle")
-      .data(rows)
-      .enter()
-      .append("circle")
-      .attr("cx", (d) => x(d.year))
-      .attr("cy", (d) => y(d.love))
-      .attr("r", 2.7)
-      .attr("fill", (d) => COLORS[d.genre] || "#999")
-      .attr("opacity", 0.70);
+  const dots = g.append("g")
+    .selectAll("circle")
+    .data(rows)
+    .enter()
+    .append("circle")
+    .attr("cx", d => x(d.year))
+    .attr("cy", d => y(d.love))
+    .attr("r", 2.7)
+    .attr("fill", d => COLORS[d.genre] || "#999")
+    .attr("opacity", 0.70);
 
-    dots
-      .on("mouseenter", (event, d) => {
-        if (hidden.has(d.genre)) return;
-        d3.select(event.currentTarget).attr("r", 4.2).attr("opacity", 0.95);
-        const title = d.title || "(title unavailable)";
-        const author = d.author || "(author unavailable)";
-        tip
-          .style("opacity", 1)
-          .html(
-            `<strong>${title}</strong><br/>${author}<br/>
-             <span style="opacity:.9">${d.genre} · ~${Math.round(d.year)} AH · Love Index: ${d.love.toFixed(
-              3
-            )}</span>`
-          )
-          .style("left", `${event.offsetX + 12}px`)
-          .style("top", `${event.offsetY - 8}px`);
-      })
-      .on("mousemove", (event) => {
-        tip.style("left", `${event.offsetX + 12}px`).style("top", `${event.offsetY - 8}px`);
-      })
-      .on("mouseleave", (event) => {
-        d3.select(event.currentTarget).attr("r", 2.7).attr("opacity", 0.70);
-        tip.style("opacity", 0);
-      });
-
-    // legend toggle
-    const lg = g.append("g").attr("transform", `translate(${plotW + 18}, 8)`);
-
-    GENRES.forEach((k, i) => {
-      const row = lg
-        .append("g")
-        .attr("transform", `translate(0, ${i * 20})`)
-        .attr("class", "legend-clickable")
-        .on("click", () => toggle(k, row));
-
-      row
-        .append("rect")
-        .attr("width", 12)
-        .attr("height", 12)
-        .attr("rx", 3)
-        .attr("y", -9)
-        .attr("fill", COLORS[k] || "#999");
-
-      row
-        .append("text")
-        .attr("x", 18)
-        .attr("y", 0)
-        .style("font-size", "12px")
-        .style("font-weight", 800)
-        .text(k);
-
-      function toggle(genre, rowSel) {
-        if (hidden.has(genre)) hidden.delete(genre);
-        else hidden.add(genre);
-
-        const isOff = hidden.has(genre);
-        rowSel.classed("is-off", isOff);
-
-        dots.attr("display", (d) => (hidden.has(d.genre) ? "none" : null));
-        tip.style("opacity", 0);
-      }
+  dots
+    .on("mouseenter", (event, d) => {
+      if (hidden.has(d.genre)) return;
+      d3.select(event.currentTarget).attr("r", 4.2).attr("opacity", 0.95);
+      const title = d.title || "(title unavailable)";
+      const author = d.author || "(author unavailable)";
+      tip.style("opacity", 1)
+        .html(
+          `<strong>${title}</strong><br/>${author}<br/>
+           <span style="opacity:.9">${d.genre} · ~${Math.round(d.year)} AH · Love Index: ${d.love.toFixed(3)}</span>`
+        )
+        .style("left", `${event.offsetX + 12}px`)
+        .style("top", `${event.offsetY - 8}px`);
+    })
+    .on("mousemove", (event) => {
+      tip.style("left", `${event.offsetX + 12}px`).style("top", `${event.offsetY - 8}px`);
+    })
+    .on("mouseleave", (event) => {
+      d3.select(event.currentTarget).attr("r", 2.7).attr("opacity", 0.70);
+      tip.style("opacity", 0);
     });
-  }
+
+  // legend toggle
+  const lg = g.append("g").attr("transform", `translate(${plotW + 18}, 8)`);
+
+  GENRES.forEach((k, i) => {
+    const row = lg.append("g")
+      .attr("transform", `translate(0, ${i * 20})`)
+      .attr("class", "legend-clickable")
+      .on("click", () => toggle(k, row));
+
+    row.append("rect")
+      .attr("width", 12).attr("height", 12).attr("rx", 3)
+      .attr("y", -9)
+      .attr("fill", COLORS[k] || "#999");
+
+    row.append("text")
+      .attr("x", 18).attr("y", 0)
+      .style("font-size", "12px")
+      .style("font-weight", 800)
+      .text(k);
+
+    function toggle(genre, rowSel) {
+      if (hidden.has(genre)) hidden.delete(genre);
+      else hidden.add(genre);
+
+      const isOff = hidden.has(genre);
+      rowSel.classed("is-off", isOff);
+
+      dots.attr("display", d => (hidden.has(d.genre) ? "none" : null));
+      tip.style("opacity", 0);
+    }
+  });
+}
 
   // ============================================================
-  // Spotlights (top/bottom)
+  // Spotlights (top/bottom) — also avoid out-of-range weird dates
   // ============================================================
-  function renderSpotlights(rows) {
+  function renderSpotlights(rowsAll, xMinFixed, xMaxFixed) {
     const topEl = document.getElementById("top-texts");
     const botEl = document.getElementById("bottom-texts");
     if (!topEl || !botEl) return;
 
     topEl.innerHTML = "";
     botEl.innerHTML = "";
+
+    const rows = rowsAll.filter((d) => d.year >= 1 && d.year <= xMaxFixed);
 
     const sorted = [...rows].sort((a, b) => b.love - a.love);
     const top = sorted.slice(0, 5);
@@ -605,9 +575,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const li = document.createElement("li");
       const t = d.title || "(title unavailable)";
       const a = d.author ? ` — ${d.author}` : "";
-      li.innerHTML = `<strong>${t}</strong>${a}<br/><span class="note">${d.genre} · ~${Math.round(
-        d.year
-      )} AH · LoveIndex: ${d.love.toFixed(3)}</span>`;
+      li.innerHTML = `<strong>${t}</strong>${a}<br/><span class="note">${d.genre} · ~${Math.round(d.year)} AH · LoveIndex: ${d.love.toFixed(3)}</span>`;
       return li;
     }
   }

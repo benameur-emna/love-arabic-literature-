@@ -12,8 +12,8 @@
   <link rel="stylesheet" href="styles.css" />
 
   <!-- ✅ Keep ONLY one correct D3 import -->
-  <script src="https://d3js.org/d3.v7.min.js" defer></script>
-  <script src="results.js" defer></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="results.js?v=1500" defer></script>
 </head>
 
 <body class="theme-garnet">
@@ -35,7 +35,8 @@
       <nav class="nav" aria-label="Main">
         <a href="index.html">Home</a>
         <a href="index.html#project">About</a>
-        <a href="methods.html">Data</a>
+        <a href="data.html">Data</a>
+        <a href="methods.html">Methods</a>
         <a href="results.html" aria-current="page">Results</a>
         <a href="index.html#team">Team</a>
         <a href="index.html#contact">Contact</a>
@@ -45,27 +46,34 @@
 
   <main id="main">
 
-    <!-- Hero -->
-    <section class="hero" aria-labelledby="h-res">
-      <div class="wrap hero__in">
-        <h1 id="h-res" class="hero-line en">Results</h1>
-        <p class="hero-line ar" dir="rtl" lang="ar">النتائج</p>
-        <p class="hero-meta">Preliminary findings on love discourse in Arabic literature (Love Index, 0–2)</p>
+ <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero__in">
+      <h1 class="hero-line en">Results</h1>
+      <p class="hero-line ar" dir="rtl" lang="ar">النتائج</p>
+      <p class="hero-meta">
+        Preliminary findings on love discourse in Arabic literature 
+      </p>
 
-        <div style="margin-top:1rem;">
-          <span class="pill" style="display:inline-block; padding:.35rem .6rem; border-radius:999px; background:rgba(184,106,106,.18); border:1px solid rgba(184,106,106,.45); font-weight:700;">
-            Preliminary
-          </span>
-          <span style="margin-left:.5rem; opacity:.9;">
-            Work in progress — results may evolve as the corpus, metadata, and scoring procedure are refined.
-          </span>
-        </div>
+      <span class="pill warning">
+        Preliminary results · Work in progress
+      </span>
+    </div>
+  </section>
 
-        <p style="margin-top:1rem; max-width:60ch;">
-          We track the density of love-related discourse with a Love Index (<code>BoC_final_0_2</code>, 0–2).
-          Across centuries and genres, the current data suggests an early decline followed by a possible late rebound—patterns we probe with simple statistical models.
+  <!-- INTRO -->
+  <section class="section">
+    <div class="wrap narrow">
+      <div class="paper card shadow panel">
+        <p>
+          We track the density of love-related discourse using a Love Index
+          (0–2). Across centuries and genres, the current
+          data suggests an early decline followed by a possible late rebound —
+          patterns that we explore visually and test with simple statistical models.
         </p>
       </div>
+    </div>
+  </section>
 
       <div class="sep" aria-hidden="true">
         <svg class="fleuron" viewBox="0 0 160 24" role="img" aria-label="separator">
@@ -172,25 +180,32 @@
       </div>
     </section>
 
-    <!-- 5) Text spotlights -->
-    <section class="section">
-      <div class="wrap narrow">
-        <div class="paper card shadow panel">
-          <h2 class="sec-title">Text spotlights (examples from both ends)</h2>
-          <p class="note">
-            The following titles illustrate the range of Love Index scores in the current version of the dataset.
-          </p>
+   <!-- 5. TEXT SPOTLIGHTS -->
+  <section class="section">
+    <div class="wrap narrow">
+      <div class="paper card shadow panel">
+        <h2 class="sec-title">
+          Text spotlights (examples from both ends)
+        </h2>
 
-          <div class="vizgrid" style="align-items:start;">
-            <div>
-              <h3 class="sec-title">Among the most “amorous” texts</h3>
-              <ul id="top-texts"></ul>
-            </div>
-            <div>
-              <h3 class="sec-title">Among the least “amorous” texts</h3>
-              <ul id="bottom-texts"></ul>
-            </div>
+        <div class="grid-2">
+          <div>
+            <h3>Among the most “amorous” texts</h3>
+            <ul>
+              <li>Kitāb al-Aghānī — Abū al-Faraj al-Iṣfahānī</li>
+              <li>Ṭawq al-Ḥamāma — Ibn Ḥazm</li>
+              <li>Risāla fī māhiyyat al-ʿishq — Ibn Sīnā</li>
+            </ul>
           </div>
+
+          <div>
+            <h3>Among the least “amorous” texts</h3>
+            <ul>
+              <li>Kitāb al-ʿAyn — al-Khalīl ibn Aḥmad</li>
+              <li>Dīwān Abī Ṭālib</li>
+            </ul>
+          </div>
+        </div>
 
           <p class="note" style="margin-top:1rem;">
             High scores typically reflect sustained love-related language, while low scores often correspond to works whose dominant aims are not love-related (e.g., lexicography or other technical genres).
