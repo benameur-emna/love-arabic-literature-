@@ -1028,3 +1028,43 @@ body.theme-garnet{
 .legend-clickable.is-off{
   opacity: 0.28;
 }
+/* Tous les liens-boutons */
+a.btn{
+  text-decoration: none;     /* enlève la sous-ligne */
+  color: #222;               /* couleur du texte (change ici) */
+}
+
+/* État visité (évite le violet) */
+a.btn:visited{
+  color: #222;
+}
+
+/* Survol / focus (accessibilité clavier) */
+a.btn:hover,
+a.btn:focus-visible{
+  text-decoration: none;
+  color: #222;               /* ou une autre couleur au hover */
+}
+
+/* Si tu veux une couleur différente pour les "ghost" */
+a.btn.ghost{
+  color: #555;               /* change ici */
+}
+
+a.btn.ghost:hover,
+a.btn.ghost:focus-visible{
+  color: #222;               /* change ici */
+}
+/* Bigger rose icon (home/skip) */
+.rose-skip.left{
+  width: 72px;     /* ajuste ici */
+  height: 72px;    /* ajuste ici */
+  display: inline-grid;
+  place-items: center;
+}
+
+.rose-skip.left svg{
+  width: 100%;
+  height: 100%;
+  transform: none;        /* annule l'ancien scale(1.2) */
+}
