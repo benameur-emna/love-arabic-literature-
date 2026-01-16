@@ -1057,8 +1057,8 @@ a.btn.ghost:focus-visible{
 }
 /* Bigger rose icon (home/skip) */
 .rose-skip.left{
-  width: 72px;     /* ajuste ici */
-  height: 72px;    /* ajuste ici */
+  width: 60px;     /* ajuste ici */
+  height: 60px;    /* ajuste ici */
   display: inline-grid;
   place-items: center;
 }
