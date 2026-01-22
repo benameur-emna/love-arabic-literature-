@@ -1,12 +1,9 @@
-/* results.js — Results page (robust CSV parsing + interactive genre toggles + continuous scatter bounded to 0–1500 AH) */
 console.log("✅ results.js loaded — v1500");
 document.addEventListener("DOMContentLoaded", async () => {
   const CSV_PATH = "data/BoC_v3_EXTENDED_scored.csv";
 
-  // Genres shown on site
   const GENRES = ["BIO", "DEV", "PHI", "POE", "RHE", "THE"];
 
-  // ✅ Keep your preferred palette
   const COLORS = {
     BIO: "#1E1916",
     DEV: "#0E3A45",
@@ -16,7 +13,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     THE: "#C39A6B",
   };
 
-  // Map your CSV GenreCode to your 6 genres
   const GENRE_MAP = {
     b: "BIO",
     d: "DEV",
@@ -26,11 +22,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     k: "THE",
   };
 
-  // ✅ scatter X-axis bounds
   const SCATTER_X_MIN = 0;
   const SCATTER_X_MAX = 1500;
 
-  // ---------- helpers
   const norm = (s) => String(s ?? "").trim();
   const lower = (s) => norm(s).toLowerCase();
 
@@ -68,7 +62,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (el) el.textContent = v;
   }
 
-  // stable hash → stable jitter (so points don't move on refresh)
   function hashToUnit(str) {
     const s = String(str ?? "");
     let h = 2166136261;
@@ -89,22 +82,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     const k = s.toLowerCase();
     if (GENRE_MAP[k]) return GENRE_MAP[k];
 
-    // if GenreLabel like "POE - Poetic (...)"
     for (const g of GENRES) {
       if (up.startsWith(g)) return g;
     }
     return null;
   }
 
-  // Your `date` column looks like century AH (1..15)
   function inferCenturyFromDate(v) {
     const n = coerceNumber(v);
     if (n == null) return null;
 
-    // treat as century if small integer
+
     if (n >= 1 && n <= 30) return Math.round(n);
 
-    // otherwise could be AH year (rare here)
+
     if (n >= 50 && n <= 2000) {
       const c = Math.floor((n - 1) / 100) + 1;
       return c >= 1 && c <= 30 ? c : null;
@@ -112,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return null;
   }
 
-  // ---------- load CSV
+
   let raw;
   try {
     raw = await d3.csv(CSV_PATH);
@@ -131,7 +122,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const columns = raw.columns;
 
-  // ---------- detect key columns (match your header)
   const genreCol =
     findColumn(columns, ["GenreCode", "genrecode", "genre_code", "genre"]) ||
     findColumnFuzzy(columns, ["genre"]);
@@ -166,7 +156,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // ---------- normalize rows
+
   const rows = [];
   for (const r of raw) {
     const genre = normalizeGenre(r[genreCol]) || normalizeGenre(r["GenreLabel"]);
@@ -184,9 +174,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     const author = authorCol ? norm(r[authorCol]) : "";
     const uri = uriCol ? norm(r[uriCol]) : "";
 
-    // continuous time (approx): spread within century with stable jitter
-    const baseYear = (century - 1) * 100; // start of century
-    const jitter = Math.floor(hashToUnit(uri || title || author) * 100); // 0..99 stable
+
+    const baseYear = (century - 1) * 100; 
+    const jitter = Math.floor(hashToUnit(uri || title || author) * 100); 
     const yearApprox = baseYear + jitter + 1;
 
     rows.push({
@@ -209,7 +199,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // ---------- aggregates (by century) for the line charts
   const MIN_C = 2;
   const MAX_C = 15;
   const centuries = d3.range(MIN_C, MAX_C + 1);
@@ -232,7 +221,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     byGenre.push({ genre: g, values: series });
   }
 
-  // ---------- stats numbers (your current displayed ones)
   setText("q_century", "−0.1228 (p < 0.001)");
   setText("q_century2", "+0.0065 (p < 0.001)");
   setText("q_r2", "0.027");
@@ -244,15 +232,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   setText("s_r2", "0.041");
   setText("s_interp", "The model detects a break, but the post-12 period does not form a clean recovery slope. This suggests a change in dynamics rather than a simple monotonic return.");
 
-  // ---------- render charts
   drawGlobalLine("#chart-global", pooled, MIN_C, MAX_C, COLORS.POE);
   drawGenreLines("#chart-genre", byGenre, MIN_C, MAX_C, GENRES, COLORS);
   drawScatter("#chart-scatter", rows);
   renderSpotlights(rows, SCATTER_X_MIN, SCATTER_X_MAX);
 
-  // ============================================================
-  // Charts helpers
-  // ============================================================
 
   function baseSvg(container, height = 420) {
     container.innerHTML = "";
@@ -450,14 +434,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // ============================================================
-  // ✅ Scatter — bounded x-axis + filtered outliers
-  // ============================================================
  function drawScatter(selector, rowsAll) {
   const container = document.querySelector(selector);
   if (!container) return;
 
-  // ✅ 1) FILTER OUTLIERS (hard)
   const rows = rowsAll.filter(d => Number.isFinite(d.year) && d.year >= 1 && d.year <= 1500);
 
   const { svg, width, height } = baseSvg(container, 520);
@@ -467,7 +447,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-  // ✅ 2) FORCE DOMAIN
   const x = d3.scaleLinear().domain([0, 1500]).range([0, plotW]);
   const y = d3.scaleLinear().domain([0, 2]).range([plotH, 0]);
 
@@ -551,9 +530,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 }
 
-  // ============================================================
-  // Spotlights (top/bottom) — also avoid out-of-range weird dates
-  // ============================================================
   function renderSpotlights(rowsAll, xMinFixed, xMaxFixed) {
     const topEl = document.getElementById("top-texts");
     const botEl = document.getElementById("bottom-texts");

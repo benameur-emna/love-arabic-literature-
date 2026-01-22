@@ -1,10 +1,4 @@
-/* methods.js — lightweight interactivity for the Methods page
-   - auto-close accordions (optional)
-   - editable weights UI (sliders) + formula rendering
-*/
-
 document.addEventListener("DOMContentLoaded", () => {
-  // --- 1) Optional: "one open at a time" accordion behavior
   const details = Array.from(document.querySelectorAll(".acc details"));
   details.forEach((d) => {
     d.addEventListener("toggle", () => {
@@ -15,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // --- 2) Weights playground
   const DEFAULT_WEIGHTS = {
     anchor: 1.00,
     desire: 0.80,

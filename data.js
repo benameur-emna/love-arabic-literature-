@@ -1,4 +1,4 @@
-/* data.js — DATA page charts (robust column detection + interactive legend) */
+
 
 document.addEventListener("DOMContentLoaded", async () => {
   const CSV_PATH = "data/BoC_v3_EXTENDED_scored.csv";
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     THE: "THE",
   };
 
-  // ---- High-contrast palette (fits your DA)
+
   const COLORS = {
     BIO: "#1E1916",  // ink (almost black)
     DEV: "#0E3A45",  // deep teal
@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     THE: "#C39A6B",  // patinated gold
   };
 
-  // ---- Helpers
+
   const norm = (s) => String(s || "").trim();
   const lower = (s) => norm(s).toLowerCase();
 
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function toCenturyFromYear(y) {
-    // assumes AH year; if you already have AH centuries, we won't use this
+
     return Math.floor((y - 1) / 100) + 1;
   }
 
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!v) return null;
     const upper = v.toUpperCase();
 
-    // direct match or embedded code
+
     const found = GENRES.find(
       (g) =>
         upper === g ||
@@ -78,10 +78,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const v = coerceNumber(row[centuryCol]);
     if (!v) return null;
 
-    // If it's already 2..15, keep
+
     if (v >= 2 && v <= 20) return Math.round(v);
 
-    // If it's AH year like 350, convert to century
+
     if (v >= 50 && v <= 2000) {
       const c = toCenturyFromYear(v);
       if (c >= 1 && c <= 30) return c;
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return base.filter((t) => t <= maxVal);
   }
 
-  // ---- Load CSV
+
   let raw;
   try {
     raw = await d3.csv(CSV_PATH);
@@ -114,17 +114,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const columns = raw.columns;
 
-  // ---- Detect columns
+
   const genreCol =
     findColumn(columns, ["genre", "Genre", "GenreLabel", "genrelabel", "GenreCode", "genre_code", "genre_abbr"]) ||
     findColumnFuzzy(columns, ["genre"]);
 
-  // century might be directly present
+
   let centuryCol =
     findColumn(columns, ["century", "Century", "century_ah", "Century_AH", "ah_century", "centuryAH", "century_hijri"]) ||
     findColumnFuzzy(columns, ["century"]);
 
-  // else compute from year-like column
+
   const yearCol =
     findColumn(columns, ["year", "Year", "date", "Date", "year_ah", "ah_year", "hijri_year"]) ||
     findColumnFuzzy(columns, ["year", "date", "hijri", "ah"]);
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // ---- Build normalized rows {genre, century}
+
   const rows = [];
   for (const r of raw) {
     const g = inferGenreValue(r, genreCol);
@@ -146,14 +146,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!c && yearCol) {
       const y = coerceNumber(r[yearCol]);
       if (y) {
-        // convert AH year -> century
+
         const cy = toCenturyFromYear(y);
         if (cy) c = cy;
       }
     }
 
     if (!c) continue;
-    if (c < 2 || c > 15) continue; // focus current release (2..15 AH)
+    if (c < 2 || c > 15) continue; 
 
     rows.push({ genre: g, century: c });
   }
@@ -170,17 +170,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  // ---- Counts per genre (for table + pie)
+
   const countsByGenre = new Map(GENRES.map((g) => [g, 0]));
   for (const r of rows) countsByGenre.set(r.genre, (countsByGenre.get(r.genre) || 0) + 1);
 
-  // fill table cells
+
   for (const g of GENRES) {
     const cell = document.getElementById(`c_${g}`);
     if (cell) cell.textContent = String(countsByGenre.get(g) || 0);
   }
 
-  // ---- Aggregate by century x genre
+
   const centuries = d3.range(2, 16); // 2..15
   const dataByCentury = centuries.map((c) => {
     const obj = { century: c };
@@ -195,13 +195,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     dataByCentury[i][r.genre] += 1;
   }
 
-  // ---- Draw charts
+
   drawLineChart("#chart-lines", dataByCentury, GENRES, COLORS);
   drawPie("#chart-pie", "#pie-legend", countsByGenre, COLORS);
 
-  // =========================
-  // Chart functions
-  // =========================
+
 
   function drawLineChart(selector, series, genres, colors) {
     const container = document.querySelector(selector);
@@ -237,13 +235,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       .range([plotH, 0])
       .clamp(true);
 
-    // grid
+
     g.append("g")
       .attr("class", "grid")
       .call(d3.axisLeft(y).tickValues(niceLogTicks(maxVal)).tickSize(-plotW).tickFormat(""))
       .attr("opacity", 0.22);
 
-    // axes
+
     g.append("g")
       .attr("transform", `translate(0,${plotH})`)
       .call(d3.axisBottom(x).ticks(14).tickFormat(d3.format("d")));
@@ -255,7 +253,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         .tickFormat((d) => (d >= 1000 ? `${d / 1000}k` : d))
     );
 
-    // axis labels
+
     g.append("text")
       .attr("x", 0)
       .attr("y", -10)
@@ -273,21 +271,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       .style("font-size", "12px")
       .text("Century (AH)");
 
-    // tooltip
+
     const tip = d3
       .select(container)
       .append("div")
       .attr("class", "viztip")
       .style("opacity", 0);
 
-    // line generator
+
     const line = d3
       .line()
       .x((d) => x(d.century))
       .y((d) => y(Math.max(1, d.value)))
       .curve(d3.curveMonotoneX);
 
-    // -------- interactive legend state
+
     const visible = Object.fromEntries(genres.map((gg) => [gg, true]));
 
     function applyVisibility() {
@@ -299,12 +297,12 @@ document.addEventListener("DOMContentLoaded", async () => {
           .duration(180)
           .attr("opacity", on ? 0.95 : 0.06);
 
-        // points should only be interactive when visible
+
         g.selectAll(`.pt-${k}`)
           .style("pointer-events", on ? "auto" : "none");
       });
 
-      // legend styling
+
       genres.forEach((k) => {
         g.selectAll(`.legend-dot-${k}`)
           .transition()
@@ -318,7 +316,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     }
 
-    // draw each genre
+
     for (const k of genres) {
       const values = series.map((d) => ({ century: d.century, value: d[k] || 0 }));
 
@@ -331,7 +329,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         .attr("opacity", 0.95)
         .attr("d", line);
 
-      // hover points (invisible until hover)
+
       g.selectAll(`.pt-${k}`)
         .data(values)
         .enter()
@@ -360,7 +358,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // -------- legend (clickable + dblclick solo)
     const lg = g.append("g").attr("transform", `translate(${plotW + 18}, 10)`);
 
     genres.forEach((k, i) => {
@@ -383,13 +380,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         .text(GENRE_LABEL[k] || k)
         .attr("class", `legend-label legend-label-${k}`);
 
-      // click = toggle
       row.on("click", () => {
         visible[k] = !visible[k];
         applyVisibility();
       });
 
-      // double click = solo / reset
       row.on("dblclick", () => {
         const currentlySolo = genres.every((gg) => (gg === k ? visible[gg] : !visible[gg]));
         if (currentlySolo) {
@@ -401,7 +396,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
     });
 
-    // initial state
     applyVisibility();
   }
 
@@ -464,7 +458,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         tip.style("opacity", 0);
       });
 
-    // center label
     g.append("text")
       .attr("text-anchor", "middle")
       .attr("y", -2)
@@ -479,7 +472,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       .style("opacity", 0.9)
       .text(`${total} texts`);
 
-    // legend list
     if (legend) {
       for (const e of entries) {
         const pct = ((e.value / total) * 100).toFixed(1);

@@ -1,4 +1,4 @@
-/* === Palette (dominant garnet, smart accents) === */
+
 :root{
   --paper:#F6F1E7;
   --paper-2:#EFE7DA;
@@ -20,7 +20,6 @@ body.theme-garnet{
   font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height:1.7;
 }
 
-/* Frame: header/footer grenat; main transparent so grenat dominates */
 .site-hdr, .site-ftr{ background: var(--garnet); color: var(--paper); }
 .hdr__in, .ftr__in{ padding:.8rem 0; display:flex; align-items:center; justify-content:flex-end; gap:1rem; }
 .nav{ display:flex; gap:1rem; }
@@ -29,20 +28,18 @@ body.theme-garnet{
 .site-ftr a{ color: var(--paper); text-decoration:none; }
 .site-ftr a:hover{ text-decoration:underline; }
 
-/* Sections sit directly on garnet; content uses paper cards */
 .section{ padding: 2rem 0; border-top:1px solid rgba(246,241,231,.08); }
 .wrap{ width:min(1120px,92vw); margin:0 auto; }
 .narrow{ width:min(860px,86vw); }
 .sec-title{ font-family:"Newsreader", serif; font-weight:700; color: var(--ink); font-size: clamp(1.25rem,3vw,1.7rem); margin:.2rem 0 .8rem; }
 .center{ text-align:center; }
 
-/* Paper cards */
 .paper{ background: var(--paper); color: var(--ink); }
 .card{ border:1px solid rgba(43,36,32,.10); }
 .shadow{ box-shadow: var(--shadow); }
 .panel{ padding: 1rem 1.2rem; }
 
-/* Hero: bilingual on garnet with ultra-light calligraphic filigree (no gradient) */
+
 .hero{ position:relative; padding: 3.2rem 0 1.4rem; }
 .hero::before{
   content:""; position:absolute; inset:0; pointer-events:none; opacity:.10;
@@ -53,18 +50,18 @@ body.theme-garnet{
 .hero-line.en{ font-family:"Newsreader", serif; font-weight:700; font-size: clamp(1.7rem,3.8vw,2.4rem); line-height:1.15; margin:0; color: var(--paper); }
 .hero-line.ar{ font-family:"Amiri", serif; font-size: clamp(1.28rem,3vw,1.7rem); margin:.2rem 0 0; color: var(--paper); opacity:.95; }
 
-/* Fleuron separator */
+
 .sep{ display:flex; justify-content:center; padding:.9rem 0 0; color: var(--rose); }
 .fleuron{ width: 140px; height: 28px; display:block; }
 
-/* Project card centered */
+
 .project .card{ padding: 1.2rem 1.3rem; }
 
-/* Duo side-by-side */
+
 .duo__grid{ display:grid; grid-template-columns: 1fr 1fr; gap:1.2rem; align-items:start; }
 @media (max-width: 900px){ .duo__grid{ grid-template-columns:1fr; } }
 
-/* Accents */
+
 .accent-bordeaux{ border-bottom: 2px solid var(--bordeaux); padding-bottom:.2rem; }
 .accent-rose{ border-bottom: 2px solid var(--rose); padding-bottom:.2rem; }
 .text-link{ text-decoration:none; border-bottom:1px solid currentColor; padding-bottom:1px; }
@@ -72,25 +69,25 @@ body.theme-garnet{
 .text-link.rose{ color: var(--rose); }
 .note{ opacity:.8; }
 
-/* Quote compact (on garnet, but paper text) */
+
 .quote .q-ar{ font-family:"Amiri", serif; font-size:1.2rem; text-align:center; color: var(--paper); }
 .quote .q-tr{ text-align:center; color: var(--paper); opacity:.85; margin:.35rem 0 0; }
 
-/* Micro (team + contact) as a thin row */
+
 .micro .micro__grid{ display:grid; grid-template-columns: 1fr 1fr; gap:1rem; align-items:center; }
 @media (max-width:720px){ .micro .micro__grid{ grid-template-columns:1fr; } }
 .micro-title{ font-family:"Newsreader", serif; font-size: 1rem; color: var(--paper); margin:0 0 .2rem; }
 .micro-text{ color: var(--paper); margin:0; }
 .micro-text a{ color: var(--paper); text-decoration: underline; text-underline-offset: 2px; }
 
-/* Utility */
+
 .bullets{ margin:.4rem 0 0; padding-left: 1.1rem; }
 .bullets li{ margin:.35rem 0; }
 
-/* No rounded pills — keep edges sharp */
+
 .nav a, .panel, .card{ border-radius: 2px; }
 
-/* Tiny rose "skip to content" button */
+
 .rose-skip{
   position: fixed;
   top: 10px; right: 12px;
@@ -102,11 +99,11 @@ body.theme-garnet{
 .rose-skip:hover path[fill], .rose-skip:focus path[fill]{ fill: var(--gold); outline: none; }
 .visually-hidden{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
 
-/* Title color overrides */
+
 #methods-title{ color: var(--bordeaux); }
 #results-title{ color: var(--rose); }
 
-/* Tiny pomegranate skip link (top-left) */
+
 .pome-skip{
   position: fixed;
   top: 10px; left: 12px;
@@ -118,7 +115,7 @@ body.theme-garnet{
 .pome-skip:hover svg path[fill="#B86A6A"]{ fill: var(--gold); }
 .visually-hidden{ position:absolute !important; height:1px; width:1px; overflow:hidden; clip:rect(1px,1px,1px,1px); white-space:nowrap; }
 
-/* Data & Methods emphasized with bordeaux */
+
 #methods.panel{
   box-shadow: 0 18px 44px rgba(0,0,0,.18), 0 8px 24px rgba(92,15,18,.22);
   border-top: 2px solid var(--bordeaux);
@@ -126,7 +123,7 @@ body.theme-garnet{
 #results.panel{
   border-top: 2px solid var(--rose);
 }
-/* === PATCH COULEURS & MINI-ROSE === */
+
 :root{
   --rose:#B86A6A;
   --deep:#11212A;
@@ -145,7 +142,7 @@ body.theme-garnet{
 }
 .rose-skip.left:hover path[fill], .rose-skip.left:focus path[fill]{ fill: var(--gold); outline: none; }
 .rose-skip.left svg { transform: scale(1.2); }
-/* Hero meta */
+
 .hero-meta{
   margin-top:.4rem;
   color:#F6F1E7;
@@ -153,20 +150,20 @@ body.theme-garnet{
   font-size:.95rem;
 }
 
-/* Couleurs des titres */
+
 #project-title{ color: var(--bordeaux); }   /* Project in brief */
 #methods-title{ color: var(--deep); }       /* Data & Methods */
 #results-title{ color: var(--rose); }       /* Results */
 
-/* Soulignés */
+
 .accent-deep{ border-bottom:2px solid var(--deep); padding-bottom:.2rem; }
 .accent-rose{ border-bottom:2px solid var(--rose); padding-bottom:.2rem; }
 
-/* Bordures supérieures */
+
 #methods.panel{ border-top:2px solid var(--deep); }
 #results.panel{ border-top:2px solid var(--rose); }
 
-/* Accessibilité */
+
 .visually-hidden{
   position:absolute!important;height:1px;width:1px;overflow:hidden;
   clip:rect(1px,1px,1px,1px);white-space:nowrap;
@@ -174,13 +171,13 @@ body.theme-garnet{
 .reveal{ animation: fadeUp .6s ease both; }
 @keyframes fadeUp{ from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:none;} }
 
-/* Harmonisation des tons avec le grenat */
+
 :root{
   --bordeaux-violet:#4A1F2A;   /* Project in brief */
   --deep-greenblue:#1B3C3A;    /* Data & Methods */
 }
 
-/* Couleurs des titres */
+
 #project-title{
   color: var(--bordeaux-violet);
   border-bottom: 2px solid var(--bordeaux-violet);
@@ -193,16 +190,16 @@ body.theme-garnet{
   padding-bottom: .2rem;
 }
 
-/* Soulignés assortis */
+
 .accent-bordeaux-violet{ border-bottom: 2px solid var(--bordeaux-violet); }
 .accent-deep-greenblue{ border-bottom: 2px solid var(--deep-greenblue); }
 
-/* Bordures supérieures des panneaux */
+
 #methods.panel{ border-top: 2px solid var(--deep-greenblue); }
 #results.panel{ border-top: 2px solid var(--rose); }
 #project-title::after{ background: var(--bordeaux-violet); }
 #methods-title::after{ background: var(--deep-greenblue); }
-/* Bouton / lien "Explore →" assorti à Data & Methods */
+
 .text-link.deep,
 .text-link[data-section="methods"] {
   color: var(--deep-greenblue);
@@ -228,7 +225,7 @@ body.theme-garnet{
 }
 .ex-title{ font-weight: 600; }
 .ex-meta{ opacity: .8; font-size: 0.9rem; }
-/* --- DATA PAGE additions --- */
+
 
 .vizbox{
   width: 100%;
@@ -358,7 +355,7 @@ body.theme-garnet{
   background-position: center top;
   background-size: 520px auto;
 }
-/* === DATA page charts (D3) === */
+
 .chart-shell{
   display:grid;
   grid-template-columns: 1fr 170px;
@@ -410,13 +407,13 @@ body.theme-garnet{
   font-variant-numeric: tabular-nums;
 }
 
-/* tooltip */
+
 .tip{
   position:absolute;
   pointer-events:none;
   padding: .55rem .6rem;
   border-radius: 10px;
-  background: rgba(17,33,42,.92);   /* deep */
+  background: rgba(17,33,42,.92);  
   color: var(--paper);
   box-shadow: 0 16px 40px rgba(0,0,0,.24);
   font-family:"Inter", system-ui, sans-serif;
@@ -425,14 +422,14 @@ body.theme-garnet{
   max-width: 240px;
 }
 
-/* axis label */
+
 .axis-label{
   font-family:"Inter", system-ui, sans-serif;
   font-size: 12px;
   fill: rgba(43,36,32,.65);
 }
 
-/* pie center label */
+
 .pie-center{
   font-family:"Newsreader", serif;
   font-weight:700;
@@ -445,14 +442,14 @@ body.theme-garnet{
   fill: rgba(43,36,32,.65);
 }
 
-/* table wrapper */
+
 .table-wrap{
   overflow:auto;
   border: 1px solid rgba(43,36,32,.12);
   background: var(--paper-2);
 }
 
-/* taxonomy table */
+
 .tax-table{
   width:100%;
   border-collapse: collapse;
@@ -474,7 +471,7 @@ body.theme-garnet{
   color: var(--ink);
 }
 
-/* genre blocks */
+
 .genre-notes{
   display:grid;
   gap: .9rem;
@@ -494,7 +491,6 @@ body.theme-garnet{
   margin: 0;
 }
 
-/* key numbers box */
 .keynums{
   margin-top: 1.1rem;
   display:grid;
@@ -519,13 +515,13 @@ body.theme-garnet{
   margin-top:.15rem;
 }
 
-/* responsive */
+
 @media (max-width: 860px){
   .chart-shell{ grid-template-columns: 1fr; }
   .legend{ border-left:none; border-top: 1px solid rgba(43,36,32,.12); flex-direction:row; flex-wrap:wrap; }
   .keynums{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-/* --- DATA page helpers (safe additions) --- */
+
 
 .vizbox{
   width:100%;
@@ -621,7 +617,7 @@ body.theme-garnet{
 .gendefs p{
   margin: 0 0 0.9rem 0;
 }
-/* ---- DATA viz helpers ---- */
+
 
 .vizbox{
   width: 100%;
@@ -700,7 +696,7 @@ body.theme-garnet{
 
 .legend-row:hover text { text-decoration: underline; }
 .legend-row:hover circle { filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15)); }
-/* ===== Methods page extras (accordion + weights) ===== */
+
 
 .leadish{
   font-size: 1.05rem;
@@ -940,9 +936,9 @@ body.theme-garnet{
   font-weight: 700;
   font-size: 0.9rem;
 }
-/* Hide aggregation formula box but keep sliders intact */
+
 .eq { display: none !important; }
-/* --- viz helpers (optional but recommended) --- */
+
 .viztip{
   position: absolute;
   background: rgba(20,18,16,0.92);
@@ -960,11 +956,11 @@ body.theme-garnet{
 
 .legendrow.off text{ opacity: .45; }
 .legendrow.off circle{ opacity: .25; }
-/* ===== Results/Data charts visibility fix ===== */
+
 
 .vizbox {
   position: relative;
-  min-height: 420px;     /* IMPORTANT: gives the SVG real vertical space */
+  min-height: 420px;     
   width: 100%;
 }
 
@@ -972,7 +968,7 @@ body.theme-garnet{
   display: block;
 }
 
-/* Make D3 axes readable even if theme uses very soft colors */
+
 .vizbox .tick text {
   fill: rgba(27, 27, 27, 0.85) !important;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
@@ -988,24 +984,24 @@ body.theme-garnet{
   stroke: rgba(27, 27, 27, 0.18) !important;
 }
 
-/* Tooltip always visible above */
+
 .viztip {
   z-index: 9999;
 }
 
-/* Optional: slightly darker plot background (subtle) */
+
 .vizbox {
   background: rgba(20, 18, 16, 0.03);
   border: 1px solid rgba(20, 18, 16, 0.12);
   border-radius: 14px;
 }
-/* Ensure chart containers have height */
+
 .vizbox{
   min-height: 420px;
   position: relative;
 }
 
-/* Tooltip already used in data.js; keep consistent */
+
 .viztip{
   position: absolute;
   pointer-events: none;
@@ -1020,7 +1016,7 @@ body.theme-garnet{
   max-width: 280px;
 }
 
-/* Clickable legend */
+
 .legend-clickable{
   cursor: pointer;
   user-select: none;
@@ -1028,37 +1024,37 @@ body.theme-garnet{
 .legend-clickable.is-off{
   opacity: 0.28;
 }
-/* Tous les liens-boutons */
+
 a.btn{
-  text-decoration: none;     /* enlève la sous-ligne */
-  color: #222;               /* couleur du texte (change ici) */
+  text-decoration: none;     
+  color: #222;               
 }
 
-/* État visité (évite le violet) */
+
 a.btn:visited{
   color: #222;
 }
 
-/* Survol / focus (accessibilité clavier) */
+
 a.btn:hover,
 a.btn:focus-visible{
   text-decoration: none;
-  color: #222;               /* ou une autre couleur au hover */
+  color: #222;               
 }
 
-/* Si tu veux une couleur différente pour les "ghost" */
+
 a.btn.ghost{
-  color: #555;               /* change ici */
+  color: #555;               
 }
 
 a.btn.ghost:hover,
 a.btn.ghost:focus-visible{
-  color: #222;               /* change ici */
+  color: #222;               
 }
-/* Bigger rose icon (home/skip) */
+
 .rose-skip.left{
-  width: 40px;     /* ajuste ici */
-  height: 40px;    /* ajuste ici */
+  width: 50px;     
+  height: 50px;    
   display: inline-grid;
   place-items: center;
 }
@@ -1066,5 +1062,5 @@ a.btn.ghost:focus-visible{
 .rose-skip.left svg{
   width: 100%;
   height: 100%;
-  transform: none;        /* annule l'ancien scale(1.2) */
+  transform: none;        
 }
